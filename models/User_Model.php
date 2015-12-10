@@ -106,11 +106,13 @@ class User_Model
         if ($length == 0)
         {
             echo "No user with such login. Please, sign up or try again";
+            return;
         }
 
         if ($result[0]['pass'] != $ent_pass)
         {
             echo "Incorrect password";
+            return;
         }
 
         $user_info = $conn->query("SELECT * FROM users WHERE login = $ent_login", PDO::FETCH_OBJ);
@@ -129,18 +131,46 @@ class User_Model
 
     }
 
-    public function register()
+    public function register($login_,$pass_, $re_pass, $email_, $name_, $surname_)
     {
+        if ($pass_ != $re_pass)
+        {
+            echo "Password don't match. Try again";
+            return;
+        }
+
+        global $conn;
+        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
+        $query->execute(array($login_));
+        $result = $query->fetchAll();
+        $length = count($result);
+        if ($length != 0)
+        {
+            echo "User with such login exists. Try again";
+            return;
+        }
+        $query = $conn->prepare("SELECT * FROM userdb WHERE email = ?");
+        $query->execute(array($email_));
+        $result = $query->fetchAll();
+        $length = count($result);
+        if ($length != 0)
+        {
+            echo "User with such email exists. Try again";
+            return;
+        }
+
 
     }
 
     public function logout()
     {
-
+        session_destroy();
     }
 
     public function send_email($email_)
     {
+
+
 
     }
 

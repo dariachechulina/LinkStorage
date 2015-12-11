@@ -1,5 +1,9 @@
 <?php
 
+ $default_status = 0;
+ $default_role = 'user';
+
+require_once 'TmpLink_Model.php';
 
 class User_Model
 {
@@ -76,9 +80,17 @@ class User_Model
         }
     }
 
-    public function save()
+    public function save($login_, $pass_, $email_, $role_, $status_, $name_, $surname_)
     {
-        $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES('$this->get_login()', '$this->get_password()', '$this->get_email()', '$this->get_role()', '$this->get_status()', '$this->get_name()', '$this->get_surname()')";
+        $this->login = $login_;
+        $this->pass = $pass_;
+        $this->email = $email_;
+        $this->role = $role_;
+        $this->status = $status_;
+        $this->name = $name_;
+        $this->surname = $surname_;
+
+        $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES('$login_', '$pass_', '$email_', '$role_', '$status_', '$name_', '$surname_')";
 
         global $conn;
         $conn->exec($query);
@@ -116,7 +128,6 @@ class User_Model
         }
 
         $user_info = $conn->query("SELECT * FROM users WHERE login = $ent_login", PDO::FETCH_OBJ);
-        $cur_user = new User_Model();
         $cur_user = $user_info->fetchObject("User_Model");
 
         if (!$cur_user->is_active())
@@ -136,6 +147,13 @@ class User_Model
         if ($pass_ != $re_pass)
         {
             echo "Password don't match. Try again";
+            return;
+        }
+
+        $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
+        if (!preg_match($regex, $email_))
+        {
+            echo "Invalid email";
             return;
         }
 
@@ -159,7 +177,9 @@ class User_Model
             return;
         }
 
-
+        $new_user = new User_Model();
+        $new_user->save($login_, $pass_, $email_, 'user', 0, $name_, $surname_);
+        $new_user->send_email();
     }
 
     public function logout()
@@ -167,11 +187,17 @@ class User_Model
         session_destroy();
     }
 
-    public function send_email($email_)
+    public function send_email()
     {
+        $tmp_link = new TmpLink_Model();
+        $tmp_link->send();
 
+        global $conn;
+        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
+        $query->execute(array($this->login));
+        $result = $query->fetchAll();
 
-
+        $tmp_link->send($result[0]['uid'], $this->email);
     }
 
     public function edit_user()

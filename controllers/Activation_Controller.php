@@ -12,14 +12,22 @@ class Activation_Controller extends Controller
         $result = $query->fetchAll();
         $cur_uid = $result[0]["uid"];
 
-        $query = $conn->prepare("SELECT login FROM userdb WHERE uid = ?");
+        $query = $conn->prepare("SELECT login, status FROM userdb WHERE uid = ?");
         $query->execute(array($cur_uid));
         $result = $query->fetchAll();
         $cur_login = $result[0]['login'];
+        $cur_status = $result[0]['status'];
 
-        $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
-        $query->execute(array($cur_login));
+        if($cur_status == 0)
+        {
+            $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
+            $query->execute(array($cur_login));
 
-        echo $cur_login . ", your profile was successfully activated";
+            echo $cur_login . ", your profile was successfully activated";
+        }
+        else
+        {
+            echo "Your profile has been already activated";
+        }
     }
 }

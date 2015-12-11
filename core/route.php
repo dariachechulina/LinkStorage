@@ -10,31 +10,24 @@ class Route
 {
     static function start()
     {
-        // контроллер и действие по умолчанию
         $controller_name = 'Main';
         $action_name = 'index';
 
-        //$routes = $_GET['url'];
-       $routes = explode('/', $_SERVER['REQUEST_URI']);
-        //var_dump($routes);
+        $url_parts = parse_url($_SERVER['REQUEST_URI']);
+        $routes = explode('/', $url_parts['path']);
 
-        // получаем имя контроллера
         if ( !empty($routes[1]) )
         {
             $controller_name = $routes[1];
         }
-        // получаем имя экшена
         if ( !empty($routes[2]) )
         {
             $action_name = $routes[2];
         }
 
-        // добавляем префиксы
         $model_name = $controller_name . "_Model";
         $controller_name = $controller_name . '_Controller';
         $action_name = 'action_'.$action_name;
-
-        // подцепляем файл с классом модели (файла модели может и не быть)
 
         $model_file = $model_name.'.php';
         $model_path = "models/".$model_file;
@@ -43,7 +36,6 @@ class Route
             include "models/".$model_file;
         }
 
-        // подцепляем файл с классом контроллера
         $controller_file = $controller_name.'.php';
         $controller_path = "controllers/".$controller_file;
 
@@ -53,25 +45,18 @@ class Route
         }
         else
         {
-            /*
-            правильно было бы кинуть здесь исключение,
-            но для упрощения сразу сделаем редирект на страницу 404
-            */
             Route::ErrorPage404();
         }
 
-        // создаем контроллер
         $controller = new $controller_name;
         $action = $action_name;
 
         if(method_exists($controller, $action))
         {
-            // вызываем действие контроллера
             $controller->$action();
         }
         else
         {
-            // здесь также разумнее было бы кинуть исключение
            Route::ErrorPage404();
         }
 
@@ -79,10 +64,10 @@ class Route
 
     function ErrorPage404()
     {
-        $host = 'http://'.$_SERVER['HTTP_HOST'].'/';
+       /* $host = 'http://'.$_SERVER['HTTP_HOST'].'/';
         header('HTTP/1.1 404 Not Found');
         header("Status: 404 Not Found");
-        header('Location:'.$host.'404');
+        header('Location:'.$host.'404');*/
     }
 
 }

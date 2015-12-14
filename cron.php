@@ -1,7 +1,5 @@
 <?php
 
-echo "HI";
-
 $login = "root";
 $passwd = "qwerty123";
 $dat = date("y.m.d");

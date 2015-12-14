@@ -1,7 +1,7 @@
 <?php
 
 
-class TmpLink_Model
+class Activation_Model
 {
     private $uid, $hash, $exp_time;
 
@@ -33,15 +33,16 @@ class TmpLink_Model
         $mail->Subject = 'Account confirmation';
 
         $base_url='testtask/';
+        $cur_exptime = date("y.m.d", time() - 2*(24*60*60));
         $activation=md5($email_.time());
         $this->hash = $activation;
-        $tm = date("h:i:s");
-        $query = "INSERT INTO tmplinks (uid, hash, exp_time) VALUES('$uid_', '$activation', '$tm')";
+        $this->exp_time = $cur_exptime;
+        $query = "INSERT INTO tmplinks (uid, hash, exp_time) VALUES('$uid_', '$activation', '$cur_exptime')";
         global $conn;
         $conn->exec($query);
         $id = $conn->lastInsertId();
 
-        $body='Hello, <br/> <br/> Please, confirm your email address: <br/> <br/> <a href="'.$base_url.'activation?code='.$activation.'">'.$base_url.'activation?code='.$activation.'</a>';
+        $body='Hello, <br/> <br/> Please, confirm your email address in 2 days: <br/> <br/> <a href="'.$base_url.'activation?code='.$activation.'">'.$base_url.'activation?code='.$activation.'</a>';
 
         $mail->MsgHTML($body);
 
@@ -50,5 +51,36 @@ class TmpLink_Model
         } else {
             echo "Message sent!";
         }
+    }
+
+    public function activate_user($hash_)
+    {
+        global $conn;
+        $query = $conn->prepare("SELECT uid FROM tmplinks WHERE hash = '$hash_'");
+        $query->execute();
+        $result = $query->fetchAll();
+        if (count($result) == 0)
+        {
+            return "Incorrect or expired link";
+        }
+        $cur_uid = $result[0]["uid"];
+
+        $query = $conn->prepare("SELECT login, status FROM userdb WHERE uid = ?");
+        $query->execute(array($cur_uid));
+        $result = $query->fetchAll();
+        $cur_login = $result[0]['login'];
+        $cur_status = $result[0]['status'];
+
+        if($cur_status == 0)
+        {
+            $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
+            $query->execute(array($cur_login));
+            return $cur_login . ", your profile was successfully activated";
+        }
+        else
+        {
+            return "Your profile has been already activated";
+        }
+
     }
 }

@@ -1,9 +1,6 @@
 <?php
 
- $default_status = 0;
- $default_role = 'user';
-
-require_once 'TmpLink_Model.php';
+require_once 'Activation_Model.php';
 
 class User_Model
 {
@@ -97,6 +94,15 @@ class User_Model
         $id = $conn->lastInsertId();
     }
 
+    public function save_changes_to_db($uid_)
+    {
+        $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$uid_')";
+
+        global $conn;
+        $conn->exec($query);
+        $id = $conn->lastInsertId();
+    }
+
     public function create_user($login_,$password_, $email_, $role_, $status_, $name_, $surname_)
     {
         $this->set_login($login_);
@@ -139,7 +145,6 @@ class User_Model
         session_start();
         $_SESSION['login'] = $cur_user->get_login();
         echo "You are logged in";
-
     }
 
     public function register($login_,$pass_, $re_pass, $email_, $name_, $surname_)
@@ -189,7 +194,7 @@ class User_Model
 
     public function send_email()
     {
-        $tmp_link = new TmpLink_Model();
+        $tmp_link = new Activation_Model();
         $tmp_link->send();
 
         global $conn;
@@ -200,14 +205,69 @@ class User_Model
         $tmp_link->send($result[0]['uid'], $this->email);
     }
 
-    public function edit_user()
+    public function edit_user(User_Model $user, $login_,$password_, $email_, $role_, $status_, $name_, $surname_)
     {
+        if ($this->role != 'admin')
+        {
+            echo "You have no permission for this action";
+            return;
+        }
 
+        global $conn;
+        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = '$user->get_login()'");
+        $query->execute();
+        $result = $query->fetchAll();
+        $cur_uid = $result[0]["uid"];
+
+        if ($login_ != NULL)
+        {
+            $user->set_login($login_);
+        }
+
+        if ($password_ != NULL)
+        {
+            $user->set_password($password_);
+        }
+
+        if($email_ != NULL)
+        {
+            $user->set_email($email_);
+        }
+
+        if ($status_ != NULL)
+        {
+            $user->set_status($status_);
+        }
+
+        if ($role_ != NULL)
+        {
+            $user->set_role($role_);
+        }
+
+        if ($name_ != NULL)
+        {
+            $user->set_name($name_);
+        }
+
+        if ($surname_ != NULL)
+        {
+            $user->set_surname($surname_);
+        }
+
+        $user->save_changes_to_db($cur_uid);
     }
 
-    public function delete_user()
+    public function delete_user(User_Model $user)
     {
+        if ($this->role != 'admin')
+        {
+            echo "You have no permission for this action";
+            return;
+        }
 
+        global $conn;
+        $query = $conn->prepare("DELETE FROM userdb WHERE login = '$user->get_login()'");
+        $query->execute();
     }
 
 }

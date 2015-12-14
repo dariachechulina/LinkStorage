@@ -13,8 +13,6 @@ $result = $query->fetchAll();
 $l = count($result);
 if ($l != 0)
 {
-    $tm = date('h:i:s');
-    $new_hash = "hash" . $tm;
-   /* $query = $conn->prepare("UPDATE tmplinks SET hash='$new_hash' WHERE uid=2");
-    $query->execute();*/
+    //$query = $conn->prepare("DELETE FROM tmplinks WHERE exp_time < CURDATE()");
+    //$query->execute();
 }

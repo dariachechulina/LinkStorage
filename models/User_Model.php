@@ -114,7 +114,7 @@ class User_Model
         $this->set_surname($surname_);
     }
 
-    public function login($ent_login, $ent_pass)
+    public function validate_login_info($ent_login, $ent_pass)
     {
         global $conn;
         $query = $conn->prepare("SELECT pass FROM users WHERE login = ?");
@@ -123,16 +123,61 @@ class User_Model
         $length = count($result);
         if ($length == 0)
         {
-            echo "No user with such login. Please, sign up or try again";
-            return;
+            return "no such user";
         }
 
         if ($result[0]['pass'] != $ent_pass)
         {
-            echo "Incorrect password";
+            return "incorrect password";
+        }
+
+        return "success";
+    }
+
+    public function validate_register_info($ent_login, $ent_pass, $ent_repass, $ent_email)
+    {
+        if ($ent_pass != $ent_repass)
+        {
+            return "Password don't match. Try again";
+        }
+
+        $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
+        if (!preg_match($regex, $ent_email))
+        {
+            return "Invalid email";
+        }
+
+        global $conn;
+        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
+        $query->execute(array($ent_login));
+        $result = $query->fetchAll();
+        $length = count($result);
+        if ($length != 0)
+        {
+            return "User with such login exists. Try again";
+        }
+        $query = $conn->prepare("SELECT * FROM userdb WHERE email = ?");
+        $query->execute(array($ent_email));
+        $result = $query->fetchAll();
+        $length = count($result);
+        if ($length != 0)
+        {
+            return "User with such email exists. Try again";
+        }
+
+        return 'success';
+    }
+
+    public function login($ent_login, $ent_pass)
+    {
+        $validation_status = $this->validate_login_info($ent_login, $ent_pass);
+
+        if ($validation_status != 'success')
+        {
             return;
         }
 
+        global $conn;
         $user_info = $conn->query("SELECT * FROM users WHERE login = $ent_login", PDO::FETCH_OBJ);
         $cur_user = $user_info->fetchObject("User_Model");
 
@@ -149,36 +194,9 @@ class User_Model
 
     public function register($login_,$pass_, $re_pass, $email_, $name_, $surname_)
     {
-        if ($pass_ != $re_pass)
+        $validation_status = $this->validate_register_info($login_, $pass_, $re_pass, $email_);
+        if($validation_status != 'success')
         {
-            echo "Password don't match. Try again";
-            return;
-        }
-
-        $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
-        if (!preg_match($regex, $email_))
-        {
-            echo "Invalid email";
-            return;
-        }
-
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
-        $query->execute(array($login_));
-        $result = $query->fetchAll();
-        $length = count($result);
-        if ($length != 0)
-        {
-            echo "User with such login exists. Try again";
-            return;
-        }
-        $query = $conn->prepare("SELECT * FROM userdb WHERE email = ?");
-        $query->execute(array($email_));
-        $result = $query->fetchAll();
-        $length = count($result);
-        if ($length != 0)
-        {
-            echo "User with such email exists. Try again";
             return;
         }
 

@@ -61,7 +61,7 @@ class Activation_Model
         $result = $query->fetchAll();
         if (count($result) == 0)
         {
-            return "Incorrect or expired link";
+            return "expired";
         }
         $cur_uid = $result[0]["uid"];
 
@@ -75,11 +75,11 @@ class Activation_Model
         {
             $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
-            return $cur_login . ", your profile was successfully activated";
+            return "success";
         }
         else
         {
-            return "Your profile has been already activated";
+            return "reused";
         }
 
     }

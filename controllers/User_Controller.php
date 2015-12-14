@@ -17,4 +17,29 @@ class User_Controller extends Controller
     {
         $this->view->generate('first_view.php', 'first_view.php');
     }
+
+    function action_login()
+    {
+        $this->model->login($_POST['login'], $_POST['pass']);
+    }
+
+    function action_register()
+    {
+        $this->model->register($_POST['login'], $_POST['pass'], $_POST['repass'], $_POST['email'], $_POST['name'], $_POST['surname']);
+    }
+
+    function action_edit()
+    {
+
+    }
+
+    function action_user_edit()
+    {
+
+    }
+
+    function action_delete()
+    {
+
+    }
 }

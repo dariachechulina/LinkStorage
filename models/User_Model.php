@@ -4,16 +4,8 @@ require_once 'Activation_Model.php';
 
 class User_Model
 {
-    private $login, $email, $pass, $name, $surname, $status, $role;
+    private $login, $email, $pass, $name, $surname, $status = 0, $role = 'user', $uid = 0;
 
-    public function get_name()
-    {
-        return $this->name;
-    }
-    public function get_surname()
-    {
-        return $this->surname;
-    }
     public function get_login()
     {
         return $this->login;
@@ -34,16 +26,19 @@ class User_Model
     {
         return $this->role;
     }
-
-
-    public function set_name($name)
+    public function get_name()
     {
-        $this->name = $name;
+        return $this->name;
     }
-    public function set_surname($surname)
+    public function get_surname()
     {
-        $this->surname = $surname;
+        return $this->surname;
     }
+    public function get_uid()
+    {
+        return $this->uid;
+    }
+
     public function set_login($login)
     {
         $this->login = $login;
@@ -64,6 +59,18 @@ class User_Model
     {
         $this->role = $role;
     }
+    public function set_name($name)
+    {
+        $this->name = $name;
+    }
+    public function set_surname($surname)
+    {
+        $this->surname = $surname;
+    }
+    public function set_uid($uid)
+    {
+        $this->uid = $uid;
+    }
 
     public function is_active()
     {
@@ -77,137 +84,124 @@ class User_Model
         }
     }
 
-    public function save($login_, $pass_, $email_, $role_, $status_, $name_, $surname_)
+    public function save()
     {
-        $this->login = $login_;
-        $this->pass = $pass_;
-        $this->email = $email_;
-        $this->role = $role_;
-        $this->status = $status_;
-        $this->name = $name_;
-        $this->surname = $surname_;
-
-        $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES('$login_', '$pass_', '$email_', '$role_', '$status_', '$name_', '$surname_')";
-
         global $conn;
-        $conn->exec($query);
-        $id = $conn->lastInsertId();
+
+        if ($this->uid == 0)
+        {
+            $query = "INSERT INTO userdb (login, pass, email, role, status, name, email login) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
+            $conn->exec($query);
+            $this->uid = $conn->lastInsertId();
+        }
+        else
+        {
+            $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$uid_')";
+            $conn->exec($query);
+        }
     }
 
-    public function save_changes_to_db($uid_)
-    {
-        $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$uid_')";
-
-        global $conn;
-        $conn->exec($query);
-        $id = $conn->lastInsertId();
-    }
-
-    public function create_user($login_,$password_, $email_, $role_, $status_, $name_, $surname_)
-    {
-        $this->set_login($login_);
-        $this->set_password($password_);
-        $this->set_email($email_);
-        $this->set_role($role_);
-        $this->set_status($status_);
-        $this->set_name($name_);
-        $this->set_surname($surname_);
-    }
-
-    public function validate_login_info($ent_login, $ent_pass)
+    private function validate_login_info()
     {
         global $conn;
         $query = $conn->prepare("SELECT pass FROM users WHERE login = ?");
-        $query->execute(array($ent_login));
+        $query->execute(array($this->login));
         $result = $query->fetchAll();
         $length = count($result);
         if ($length == 0)
         {
-            return "no such user";
+            return false;
+            #return "no such user";
         }
 
-        if ($result[0]['pass'] != $ent_pass)
+        if ($result[0]['pass'] != $this->pass)
         {
-            return "incorrect password";
+            return false;
+            #return "incorrect password";
         }
 
-        return "success";
+        return true;
+        #return "success";
     }
 
-    public function validate_register_info($ent_login, $ent_pass, $ent_repass, $ent_email)
+    private function validate_register_info($repass)
     {
-        if ($ent_pass != $ent_repass)
+        if ($this->pass != $repass)
         {
-            return "Password don't match. Try again";
+            return false;
+            #return "Password don't match. Try again";
         }
 
         $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
-        if (!preg_match($regex, $ent_email))
+        if (!preg_match($regex, $this->email))
         {
-            return "Invalid email";
+            return false;
+            #return "Invalid email";
         }
 
         global $conn;
         $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
-        $query->execute(array($ent_login));
+        $query->execute(array($this->login));
         $result = $query->fetchAll();
         $length = count($result);
         if ($length != 0)
         {
-            return "User with such login exists. Try again";
+            return false;
+            #return "User with such login exists. Try again";
         }
         $query = $conn->prepare("SELECT * FROM userdb WHERE email = ?");
-        $query->execute(array($ent_email));
+        $query->execute(array($this->email));
         $result = $query->fetchAll();
         $length = count($result);
         if ($length != 0)
         {
-            return "User with such email exists. Try again";
+            return false;
+            #return "User with such email exists. Try again";
         }
 
-        return 'success';
+        return true;
+        #return 'success';
     }
 
-    public function login($ent_login, $ent_pass)
+    public function login()
     {
-        $validation_status = $this->validate_login_info($ent_login, $ent_pass);
+        $validation_status = $this->validate_login_info();
 
-        if ($validation_status != 'success')
+        if (!$validation_status)
         {
-            return;
+            return false;
         }
 
-        global $conn;
-        $user_info = $conn->query("SELECT * FROM users WHERE login = $ent_login", PDO::FETCH_OBJ);
-        $cur_user = $user_info->fetchObject("User_Model");
-
-        if (!$cur_user->is_active())
+        if (!$this->is_active())
         {
             echo "Your account isn't active. Please, check your mailbox";
-            $cur_user->send_email($cur_user->get_email());
+            $this->send_email($this->email);
         }
 
         session_start();
-        $_SESSION['login'] = $cur_user->get_login();
+        $_SESSION['login'] = $this->login;
         echo "You are logged in";
     }
 
-    public function register($login_,$pass_, $re_pass, $email_, $name_, $surname_)
+    public function register()
     {
-        $validation_status = $this->validate_register_info($login_, $pass_, $re_pass, $email_);
-        if($validation_status != 'success')
+        $validation_status = $this->validate_register_info();
+        if(!$validation_status)
         {
-            return;
+            return false;
         }
 
         $new_user = new User_Model();
-        $new_user->save($login_, $pass_, $email_, 'user', 0, $name_, $surname_);
+        $new_user->save();
         $new_user->send_email();
+
+        return true;
     }
 
     public function logout()
     {
         session_destroy();
+        return true;
     }
 
     public function send_email()
@@ -219,73 +213,70 @@ class User_Model
         $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
         $result = $query->fetchAll();
-
+        if (!count($result))
+        {
+            return false;
+        }
         $tmp_link->send($result[0]['uid'], $this->email);
+
+        return true;
     }
 
-    public function edit_user(User_Model $user, $login_,$password_, $email_, $role_, $status_, $name_, $surname_)
+    public function edit_user($login_, $password_, $email_, $role_, $status_, $name_, $surname_)
     {
         if ($this->role != 'admin')
         {
             echo "You have no permission for this action";
-            return;
+            return false;
         }
 
         global $conn;
-        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = '$user->get_login()'");
-        $query->execute();
+        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
+        $query->execute(array($login_));
         $result = $query->fetchAll();
         $cur_uid = $result[0]["uid"];
 
-        if ($login_ != NULL)
-        {
-            $user->set_login($login_);
-        }
+        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
+        $query->execute(array($login_));
+        $edited_user = $query->fetchObject('User_Model');
 
-        if ($password_ != NULL)
-        {
-            $user->set_password($password_);
-        }
+        $edited_user->set_password($password_);
+        $edited_user->set_email($email_);
+        $edited_user->set_status($status_);
+        $edited_user->set_role($role_);
+        $edited_user->set_name($name_);
+        $edited_user->set_surname($surname_);
 
-        if($email_ != NULL)
-        {
-            $user->set_email($email_);
-        }
+        $edited_user->save($cur_uid);
 
-        if ($status_ != NULL)
-        {
-            $user->set_status($status_);
-        }
-
-        if ($role_ != NULL)
-        {
-            $user->set_role($role_);
-        }
-
-        if ($name_ != NULL)
-        {
-            $user->set_name($name_);
-        }
-
-        if ($surname_ != NULL)
-        {
-            $user->set_surname($surname_);
-        }
-
-        $user->save_changes_to_db($cur_uid);
+        return true;
     }
 
-    public function delete_user(User_Model $user)
+    public function delete_user($login_)
     {
         if ($this->role != 'admin')
         {
             echo "You have no permission for this action";
-            return;
+            return false;
         }
 
         global $conn;
-        $query = $conn->prepare("DELETE FROM userdb WHERE login = '$user->get_login()'");
-        $query->execute();
+        $query = $conn->prepare("DELETE FROM userdb WHERE login = ?");
+        if (!$query->execute(array($login_)))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public function get_user_by_id($uid)
+    {
+        global $conn;
+        $query = $conn->prepare("SELECT * FROM userdb WHERE uid = ?");
+        $query->execute(array($uid));
+        $result_user = $query->fetchObject('User_Model');
+
+        return $result_user;
     }
 
 }

@@ -12,9 +12,12 @@ class Route
     {
         $controller_name = 'Main';
         $action_name = 'index';
+        $uid = 0;
 
         $url_parts = parse_url($_SERVER['REQUEST_URI']);
         $routes = explode('/', $url_parts['path']);
+
+        var_dump($routes);
 
         if ( !empty($routes[1]) )
         {
@@ -23,6 +26,11 @@ class Route
         if ( !empty($routes[2]) )
         {
             $action_name = $routes[2];
+        }
+
+        if ( !empty($routes[3]) )
+        {
+            $uid = $routes[3];
         }
 
         $model_name = $controller_name . "_Model";
@@ -53,7 +61,7 @@ class Route
 
         if(method_exists($controller, $action))
         {
-            $controller->$action();
+            $controller->$action($uid);
         }
         else
         {

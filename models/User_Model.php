@@ -74,7 +74,7 @@ class User_Model
 
     public function is_active()
     {
-        if ($this->status)
+        if ($this->status == 1)
         {
             return true;
         }
@@ -90,7 +90,7 @@ class User_Model
 
         if ($this->uid == 0)
         {
-            $query = "INSERT INTO userdb (login, pass, email, role, status, name, email login) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
+            $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
             $conn->exec($query);
             $this->uid = $conn->lastInsertId();
         }
@@ -104,21 +104,27 @@ class User_Model
     private function validate_login_info()
     {
         global $conn;
-        $query = $conn->prepare("SELECT pass FROM users WHERE login = ?");
+        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
         $result = $query->fetchAll();
         $length = count($result);
         if ($length == 0)
         {
+            echo "no such user";
             return false;
-            #return "no such user";
         }
 
         if ($result[0]['pass'] != $this->pass)
         {
+            echo "incorrect password";
             return false;
-            #return "incorrect password";
+
         }
+
+        $this->uid = $result[0]['uid'];
+        $this->email = $result[0]['email'];
+        $this->status = $result[0]['status'];
+        $this->role = $result[0]['role'];
 
         return true;
         #return "success";
@@ -159,6 +165,7 @@ class User_Model
             #return "User with such email exists. Try again";
         }
 
+        echo "SUCCESS_VALIDATION";
         return true;
         #return 'success';
     }
@@ -175,25 +182,26 @@ class User_Model
         if (!$this->is_active())
         {
             echo "Your account isn't active. Please, check your mailbox";
-            $this->send_email($this->email);
+            $this->send_email();
+            return false;
         }
 
         session_start();
         $_SESSION['login'] = $this->login;
-        echo "You are logged in";
+        echo $_SESSION['login'] . ", you are successfully logged in";
+        return true;
     }
 
-    public function register()
+    public function register($repass)
     {
-        $validation_status = $this->validate_register_info();
+        $validation_status = $this->validate_register_info($repass);
         if(!$validation_status)
         {
             return false;
         }
 
-        $new_user = new User_Model();
-        $new_user->save();
-        $new_user->send_email();
+        $this->save();
+        $this->send_email();
 
         return true;
     }
@@ -207,8 +215,6 @@ class User_Model
     public function send_email()
     {
         $tmp_link = new Activation_Model();
-        $tmp_link->send();
-
         global $conn;
         $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
         $query->execute(array($this->login));

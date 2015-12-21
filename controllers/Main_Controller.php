@@ -10,6 +10,6 @@ class Main_Controller extends Controller
 {
     function action_index()
     {
-        $this->view->generate('main_view.php', 'main_view.php');
+        $this->view->render('main_view.php', 'main_view.php');
     }
 }

@@ -37,19 +37,34 @@ class Activation_Model
         $activation=md5($email_.time());
         $this->hash = $activation;
         $this->exp_time = $cur_exptime;
-        $query = "INSERT INTO tmplinks (uid, hash, exp_time) VALUES('$uid_', '$activation', '$cur_exptime')";
-        global $conn;
-        $conn->exec($query);
-        $id = $conn->lastInsertId();
 
-        $body='Hello, <br/> <br/> Please, confirm your email address in 2 days: <br/> <br/> <a href="'.$base_url.'activation?code='.$activation.'">'.$base_url.'activation?code='.$activation.'</a>';
+        #global $conn;
+        $query = $conn->prepare("SELECT * FROM tmplinks WHERE uid = ?");
+        $query->execute(array($uid_));
+        $result = $query->fetchAll();
+        if (count($result) == 0)
+        {
+            $query = "INSERT INTO tmplinks (uid, hash, exp_time) VALUES('$uid_', '$activation', '$cur_exptime')";
+            $conn->exec($query);
+        }
+
+        else
+        {
+            $query = $conn->prepare("UPDATE tmplinks SET hash = '$this->hash', exp_time = '$this->exp_time' WHERE uid = ?");
+            $query->execute(array($uid_));
+        }
+
+        $body='Hello, <br/> <br/> Please, confirm your email address in 2 days: <br/> <br/> <a href="'.$base_url.'Activation?code='.$activation.'">'.$base_url.'Activation?code='.$activation.'</a>';
 
         $mail->MsgHTML($body);
 
-        if (!$mail->send()) {
+        if (!$mail->send())
+        {
             echo "Mailer Error: " . $mail->ErrorInfo;
-        } else {
-            echo "Message sent!";
+        }
+        else
+        {
+            #echo "Message sent!";
         }
     }
 

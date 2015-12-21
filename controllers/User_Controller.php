@@ -15,37 +15,59 @@ class User_Controller extends Controller
     }
     function action_index()
     {
-        $this->view->generate('first_view.php', 'first_view.php');
+        $this->view->render('first_view.php', 'first_view.php');
     }
 
     function action_login()
     {
-        $this->model->set_login($_POST['login']);
-        $this->model->set_password($_POST['pass']);
-        $this->model->login();
+        if (!isset($_POST['log']))
+        {
+            $this->view->render('login_view.php', 'login_view.php');
+        }
+        else
+        {
+            $this->model->set_login($_POST['login']);
+            $this->model->set_password($_POST['pass']);
+            $this->model->login();
+        }
     }
 
     function action_register()
     {
-        $this->model->set_login($_POST['login']);
-        $this->model->set_password($_POST['pass']);
-        $this->model->set_email($_POST['email']);
-        $this->model->set_name($_POST['name']);
-        $this->model->set_surname($_POST['surname']);
+        $this->view->render('register_view.php', 'register_view.php');
+        if (isset($_POST['register']))
+        {
+            $this->model->set_login($_POST['login']);
+            $this->model->set_password($_POST['pass']);
+            $this->model->set_email($_POST['email']);
+            $this->model->set_name($_POST['name']);
+            $this->model->set_surname($_POST['surname']);
 
-        $this->model->register($_POST['repass']);
+            $this->model->register($_POST['repass']);
+        }
+
     }
 
     function action_edit($uid)
     {
         $edited_user = $this->model->get_user_by_id($uid);
-        $edited_user->set_password($_POST['pass']);
-        $edited_user->set_email($_POST['email']);
-        $edited_user->set_name($_POST['name']);
-        $edited_user->set_surname($_POST['surname']);
-        $edited_user->save();
+
+        if (!isset($_POST['edit']))
+        {
+            $this->view->render('edit_view.php', 'edit_view.php', $edited_user);
+        }
+
+        if (isset($_POST['edit']))
+        {
+            $edited_user->set_password($_POST['pass']);
+            $edited_user->set_email($_POST['email']);
+            $edited_user->set_name($_POST['name']);
+            $edited_user->set_surname($_POST['surname']);
+            $edited_user->save();
+        }
+
     }
-    
+
     function action_edit_user($uid)
     {
         if ($this->model->get_role() != 'admin')

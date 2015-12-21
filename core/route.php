@@ -12,12 +12,10 @@ class Route
     {
         $controller_name = 'Main';
         $action_name = 'index';
-        $uid = 0;
+        $uid = NULL;
 
         $url_parts = parse_url($_SERVER['REQUEST_URI']);
         $routes = explode('/', $url_parts['path']);
-
-        var_dump($routes);
 
         if ( !empty($routes[1]) )
         {
@@ -61,7 +59,14 @@ class Route
 
         if(method_exists($controller, $action))
         {
-            $controller->$action($uid);
+            if ($uid == NULL)
+            {
+                $controller->$action();
+            }
+            else
+            {
+                $controller->$action($uid);
+            }
         }
         else
         {

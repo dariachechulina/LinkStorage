@@ -52,16 +52,14 @@
 
 <div class="container">
 
-    <form class="form-signin" method="post" action="/User/register">
-        <h2 class="form-signin-heading" align="center">Please sign up</h2> <br>
-        <input type=text class="input-block-level" name="name" placeholder="Name" value=""> <br> <br>
-        <input type=text class="input-block-level" name="surname" placeholder="Surname" value=""> <br> <br>
-        <input type=email class="input-block-level" name="email" placeholder="* E-mail" value="" id="1"> <br> <br>
-        <input type=text class="input-block-level" name="login" placeholder="* Login" value="" id="2"> <br> <br>
-        <input type="password" class="input-block-level" name="pass" placeholder="* Password" value="" id="3"> <br> <br>
-        <input type="password" class="input-block-level" name="repass" placeholder="* Repeat password" value="" id="4"> <br> <br>
+    <form class="form-signin" method="post" action="/Link/add">
+        <h2 class="form-signin-heading" align="center">Add link</h2> <br>
+        <input type=text class="input-block-level" name="title" placeholder="Title" value=""> <br> <br>
+        <input type=text class="input-block-level" name="link" placeholder="Link" value=""> <br> <br>
+        <input type=text class="input-block-level" name="description" placeholder="Description" value="" id="1"> <br> <br>
+        <input type=text class="input-block-level" name="privacy_status" placeholder="Privacy status" value="" id="2"> <br> <br>
 
-        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="register" align="right" disabled title="Fill all the fields">Sign up</button></p>
+        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="add">Save</button></p>
         <br>
         <p align="center"> Fields marked with * are required </p>
     </form>

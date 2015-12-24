@@ -8,6 +8,21 @@
  */
 class view
 {
+    private $template;
+
+    public $args;
+
+    function __construct()
+    {
+        $this->template = '<!DOCTYPE html> <head> %s </head> <body> %s </body>';
+    }
+
+
+    function toString()
+    {
+
+    }
+
     function render($content_view, $template_view, $data = null)
     {
         include 'views/'.$template_view;

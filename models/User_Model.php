@@ -96,7 +96,7 @@ class User_Model
         }
         else
         {
-            $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$uid_')";
+            $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$this->uid'";
             $conn->exec($query);
         }
     }
@@ -134,6 +134,7 @@ class User_Model
     {
         if ($this->pass != $repass)
         {
+            echo "Password don't match. Try again";
             return false;
             #return "Password don't match. Try again";
         }
@@ -141,6 +142,7 @@ class User_Model
         $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
         if (!preg_match($regex, $this->email))
         {
+            echo "Invalid email";
             return false;
             #return "Invalid email";
         }
@@ -152,6 +154,7 @@ class User_Model
         $length = count($result);
         if ($length != 0)
         {
+            echo "User with such login exists. Try again";
             return false;
             #return "User with such login exists. Try again";
         }
@@ -161,6 +164,7 @@ class User_Model
         $length = count($result);
         if ($length != 0)
         {
+            echo "User with such email exists. Try again";
             return false;
             #return "User with such email exists. Try again";
         }
@@ -228,36 +232,6 @@ class User_Model
         return true;
     }
 
-    public function edit_user($login_, $password_, $email_, $role_, $status_, $name_, $surname_)
-    {
-        if ($this->role != 'admin')
-        {
-            echo "You have no permission for this action";
-            return false;
-        }
-
-        global $conn;
-        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
-        $query->execute(array($login_));
-        $result = $query->fetchAll();
-        $cur_uid = $result[0]["uid"];
-
-        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
-        $query->execute(array($login_));
-        $edited_user = $query->fetchObject('User_Model');
-
-        $edited_user->set_password($password_);
-        $edited_user->set_email($email_);
-        $edited_user->set_status($status_);
-        $edited_user->set_role($role_);
-        $edited_user->set_name($name_);
-        $edited_user->set_surname($surname_);
-
-        $edited_user->save($cur_uid);
-
-        return true;
-    }
-
     public function delete_user($login_)
     {
         if ($this->role != 'admin')
@@ -283,6 +257,72 @@ class User_Model
         $result_user = $query->fetchObject('User_Model');
 
         return $result_user;
+    }
+
+    public function get_links_by_uid($uid)
+    {
+        global $conn;
+        $res = $conn->query("SELECT * FROM links WHERE uid = $uid", PDO::FETCH_LAZY);
+        $links = array(count($res));
+        $i = 0;
+        foreach ($res as $row)
+        {
+            $cur_link = new Link_Model();
+            $cur_link->set_title($row['title']);
+            $cur_link->set_link($row['link']);
+            $cur_link->set_description($row['description']);
+            $cur_link->set_privacy_status($row['privacy_status']);
+            $cur_link->set_uid($row['uid']);
+            $cur_link->set_lid($row['lid']);
+            $links[$i] = $cur_link;
+            $i++;
+        }
+
+        return $links;
+    }
+
+    public function get_public_links_by_uid($uid)
+    {
+        global $conn;
+        $res = $conn->query("SELECT * FROM links WHERE uid = $uid AND privacy_status = 'public'", PDO::FETCH_LAZY);
+        $links = array(count($res));
+        $i = 0;
+        foreach ($res as $row)
+        {
+            $cur_link = new Link_Model();
+            $cur_link->set_title($row['title']);
+            $cur_link->set_link($row['link']);
+            $cur_link->set_description($row['description']);
+            $cur_link->set_privacy_status($row['privacy_status']);
+            $cur_link->set_uid($row['uid']);
+            $cur_link->set_lid($row['lid']);
+            $links[$i] = $cur_link;
+            $i++;
+        }
+
+        return $links;
+    }
+
+    public function get_all_public_links()
+    {
+        global $conn;
+        $res = $conn->query("SELECT * FROM links WHERE  privacy_status = 'public'", PDO::FETCH_LAZY);
+        $links = array(count($res));
+        $i = 0;
+        foreach ($res as $row)
+        {
+            $cur_link = new Link_Model();
+            $cur_link->set_title($row['title']);
+            $cur_link->set_link($row['link']);
+            $cur_link->set_description($row['description']);
+            $cur_link->set_privacy_status($row['privacy_status']);
+            $cur_link->set_uid($row['uid']);
+            $cur_link->set_lid($row['lid']);
+            $links[$i] = $cur_link;
+            $i++;
+        }
+
+        return $links;
     }
 
 }

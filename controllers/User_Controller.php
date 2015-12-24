@@ -15,7 +15,9 @@ class User_Controller extends Controller
     }
     function action_index()
     {
-        $this->view->render('first_view.php', 'first_view.php');
+        #$this->view->render('first_view.php', 'first_view.php');
+        $this->model->set_login('DASHA');
+        $this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
     }
 
     function action_login()
@@ -34,7 +36,10 @@ class User_Controller extends Controller
 
     function action_register()
     {
-        $this->view->render('register_view.php', 'register_view.php');
+        if (!isset($_POST['register']))
+        {
+            $this->view->render('register_view.php', 'register_view.php');
+        }
         if (isset($_POST['register']))
         {
             $this->model->set_login($_POST['login']);
@@ -54,7 +59,7 @@ class User_Controller extends Controller
 
         if (!isset($_POST['edit']))
         {
-            $this->view->render('edit_view.php', 'edit_view.php', $edited_user);
+            $this->view->render('edit_view.php', 'template_view.php', $edited_user);
         }
 
         if (isset($_POST['edit']))
@@ -75,14 +80,25 @@ class User_Controller extends Controller
             echo 'You have no permission for this action';
             return false;
         }
+
         $edited_user = $this->model->get_user_by_id($uid);
-        $edited_user->set_password($_POST['pass']);
-        $edited_user->set_email($_POST['email']);
-        $edited_user->set_role($_POST['role']);
-        $edited_user->set_status($_POST['status']);
-        $edited_user->set_name($_POST['name']);
-        $edited_user->set_surname($_POST['surname']);
-        $edited_user->save();
+
+        if (!isset($_POST['edit']))
+        {
+            $this->view->render('edit_view.php', 'template_view.php', array($edited_user, $this->model->get_role()));
+        }
+
+        if (isset($_POST['edit']))
+        {
+            $edited_user->set_password($_POST['pass']);
+            $edited_user->set_email($_POST['email']);
+            $edited_user->set_role($_POST['role']);
+            $edited_user->set_status($_POST['status']);
+            $edited_user->set_name($_POST['name']);
+            $edited_user->set_surname($_POST['surname']);
+            $edited_user->save();
+        }
+
         return true;
     }
 

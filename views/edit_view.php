@@ -2,18 +2,18 @@
 
 var_dump($data);
 
-if ($data[1] == 'admin')
+if ($data->get_role() == 'admin')
 {
     echo "ADMIN";
 }
 
-if ($data[1] == 'user')
+if ($data->get_role() == 'user')
 {
 
-    echo '<form method="post" action="/User/edit/' . $data[0]->get_uid() . '">
+    echo '<form method="post" action="/User/edit/' . $data->get_uid() . '">
 
-    Name: <input type=text name="name" value="' . $data[0]->get_name() . '" <br> <br>
-    Surname: <input type=text name="surname" value="' . $data[0]->get_surname() . '"> <br> <br>
+    Name: <input type=text name="name" value="' . $data->get_name() . '" <br> <br>
+    Surname: <input type=text name="surname" value="' . $data->get_surname() . '"> <br> <br>
     E-mail: <input type=email name="email"  value="' . $data[0]->get_email() . '"> <br> <br>
     Login: <input type=text disabled="true" name="login" value="' . $data[0]->get_login() . '"> <br> <br>
     Password: <input type="password" name="pass" value="' . $data[0]->get_password() . '"> <br> <br>

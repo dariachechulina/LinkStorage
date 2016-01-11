@@ -59,32 +59,6 @@ class User_Controller extends Controller
 
         if (!isset($_POST['edit']))
         {
-            $this->view->render('edit_view.php', 'template_view.php', $edited_user);
-        }
-
-        if (isset($_POST['edit']))
-        {
-            $edited_user->set_password($_POST['pass']);
-            $edited_user->set_email($_POST['email']);
-            $edited_user->set_name($_POST['name']);
-            $edited_user->set_surname($_POST['surname']);
-            $edited_user->save();
-        }
-
-    }
-
-    function action_edit_user($uid)
-    {
-        if ($this->model->get_role() != 'admin')
-        {
-            echo 'You have no permission for this action';
-            return false;
-        }
-
-        $edited_user = $this->model->get_user_by_id($uid);
-
-        if (!isset($_POST['edit']))
-        {
             $this->view->render('edit_view.php', 'template_view.php', array($edited_user, $this->model->get_role()));
         }
 
@@ -92,14 +66,20 @@ class User_Controller extends Controller
         {
             $edited_user->set_password($_POST['pass']);
             $edited_user->set_email($_POST['email']);
-            $edited_user->set_role($_POST['role']);
-            $edited_user->set_status($_POST['status']);
             $edited_user->set_name($_POST['name']);
             $edited_user->set_surname($_POST['surname']);
+
+            if ($this->model->get_role() == 'admin')
+            {
+                $edited_user->set_status($_POST['status']);
+                $edited_user->set_role($_POST['role']);
+            }
+
             $edited_user->save();
         }
 
         return true;
+
     }
 
 }

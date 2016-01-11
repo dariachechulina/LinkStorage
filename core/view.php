@@ -18,7 +18,7 @@ class view
     }
 
 
-    function toString()
+    function prepare_args()
     {
 
     }

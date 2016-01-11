@@ -34,9 +34,40 @@ class Link_Controller extends Controller
             $this->model->set_link($_POST['link']);
             $this->model->set_description($_POST['description']);
             $this->model->set_privacy_status($_POST['privacy_status']);
-            $this->model->set_uid(5);
+            $this->model->set_uid($_SESSION['uid']);
 
             $this->model->save();
         }
+    }
+
+    function action_edit($lid)
+    {
+        $edited_link = $this->model->get_link_by_id($lid);
+
+        if (!isset($_POST['edit']))
+        {
+            $this->view->render('link_edit_view.php', 'template_view.php', $edited_link);
+        }
+
+        if (isset($_POST['edit']))
+        {
+            $edited_link->set_title($_POST['title']);
+            $edited_link->set_link($_POST['link']);
+            $edited_link->set_description($_POST['description']);
+            $edited_link->set_privacy_status($_POST['privacy_status']);
+            $edited_link->save();
+        }
+    }
+
+    function action_show_all()
+    {
+        $links = $this->model->get_all_public_links();
+        $this->view->render('main_view.php', 'main_view.php', $links);
+    }
+
+    function action_show_my()
+    {
+        $links = $this->model->get_links_by_uid($_SESSION['uid']);
+        $this->view->render('main_view.php', 'main_view.php', $links);
     }
 }

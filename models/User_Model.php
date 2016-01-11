@@ -192,6 +192,7 @@ class User_Model
 
         session_start();
         $_SESSION['login'] = $this->login;
+        $_SESSION['uid'] = $this->uid;
         echo $_SESSION['login'] . ", you are successfully logged in";
         return true;
     }
@@ -257,72 +258,6 @@ class User_Model
         $result_user = $query->fetchObject('User_Model');
 
         return $result_user;
-    }
-
-    public function get_links_by_uid($uid)
-    {
-        global $conn;
-        $res = $conn->query("SELECT * FROM links WHERE uid = $uid", PDO::FETCH_LAZY);
-        $links = array(count($res));
-        $i = 0;
-        foreach ($res as $row)
-        {
-            $cur_link = new Link_Model();
-            $cur_link->set_title($row['title']);
-            $cur_link->set_link($row['link']);
-            $cur_link->set_description($row['description']);
-            $cur_link->set_privacy_status($row['privacy_status']);
-            $cur_link->set_uid($row['uid']);
-            $cur_link->set_lid($row['lid']);
-            $links[$i] = $cur_link;
-            $i++;
-        }
-
-        return $links;
-    }
-
-    public function get_public_links_by_uid($uid)
-    {
-        global $conn;
-        $res = $conn->query("SELECT * FROM links WHERE uid = $uid AND privacy_status = 'public'", PDO::FETCH_LAZY);
-        $links = array(count($res));
-        $i = 0;
-        foreach ($res as $row)
-        {
-            $cur_link = new Link_Model();
-            $cur_link->set_title($row['title']);
-            $cur_link->set_link($row['link']);
-            $cur_link->set_description($row['description']);
-            $cur_link->set_privacy_status($row['privacy_status']);
-            $cur_link->set_uid($row['uid']);
-            $cur_link->set_lid($row['lid']);
-            $links[$i] = $cur_link;
-            $i++;
-        }
-
-        return $links;
-    }
-
-    public function get_all_public_links()
-    {
-        global $conn;
-        $res = $conn->query("SELECT * FROM links WHERE  privacy_status = 'public'", PDO::FETCH_LAZY);
-        $links = array(count($res));
-        $i = 0;
-        foreach ($res as $row)
-        {
-            $cur_link = new Link_Model();
-            $cur_link->set_title($row['title']);
-            $cur_link->set_link($row['link']);
-            $cur_link->set_description($row['description']);
-            $cur_link->set_privacy_status($row['privacy_status']);
-            $cur_link->set_uid($row['uid']);
-            $cur_link->set_lid($row['lid']);
-            $links[$i] = $cur_link;
-            $i++;
-        }
-
-        return $links;
     }
 
 }

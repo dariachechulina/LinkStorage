@@ -8,13 +8,15 @@
  */
 class view
 {
-    private $template;
 
-    public $args;
+    public $template;
+    public $args = array();
 
-    function __construct()
+    public function __toString()
     {
-        $this->template = '<!DOCTYPE html> <head> %s </head> <body> %s </body>';
+        ob_start();
+        $this->render();
+        return ob_get_clean();
     }
 
 
@@ -23,8 +25,15 @@ class view
 
     }
 
-    function render($content_view, $template_view, $data = null)
+    public function render()
     {
-        include 'views/'.$template_view;
+        //include 'views/'.$template_view;
+        if(method_exists($this, 'prepare_args'))
+        {
+            $this->prepare_args();
+        }
+
+        print call_user_func('sprintf', array_merge(array($this->template), $this->args));
     }
+
 }

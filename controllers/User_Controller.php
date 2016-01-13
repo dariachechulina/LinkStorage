@@ -17,14 +17,14 @@ class User_Controller extends Controller
     {
         #$this->view->render('first_view.php', 'first_view.php');
         $this->model->set_login('DASHA');
-        $this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
+       // $this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
     }
 
     function action_login()
     {
         if (!isset($_POST['log']))
         {
-            $this->view->render('login_view.php', 'login_view.php');
+           // $this->view->render('login_view.php', 'login_view.php');
         }
         else
         {
@@ -38,7 +38,7 @@ class User_Controller extends Controller
     {
         if (!isset($_POST['register']))
         {
-            $this->view->render('register_view.php', 'register_view.php');
+           // $this->view->render('register_view.php', 'register_view.php');
         }
         if (isset($_POST['register']))
         {
@@ -59,7 +59,7 @@ class User_Controller extends Controller
 
         if (!isset($_POST['edit']))
         {
-            $this->view->render('edit_view.php', 'template_view.php', array($edited_user, $this->model->get_role()));
+            //$this->view->render('edit_view.php', 'template_view.php', array($edited_user, $this->model->get_role()));
         }
 
         if (isset($_POST['edit']))

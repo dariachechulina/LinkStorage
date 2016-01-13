@@ -2,7 +2,7 @@
 
 require_once 'Activation_Model.php';
 
-class User_Model
+class User_Model extends model
 {
     private $login, $email, $pass, $name, $surname, $status = 0, $role = 'user', $uid = 0;
 

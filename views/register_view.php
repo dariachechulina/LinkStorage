@@ -24,7 +24,7 @@
         <input type="password" class="input-block-level" name="pass" placeholder="* Password" value="" id="3"> <br> <br>
         <input type="password" class="input-block-level" name="repass" placeholder="* Repeat password" value="" id="4"> <br> <br>
 
-        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="register" align="right" disabled title="Fill all the fields">Sign up</button></p>
+        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="register" align="right" >Sign up</button></p>
         <br>
         <p align="center"> Fields marked with * are required </p>
     </form>

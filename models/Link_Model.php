@@ -6,7 +6,7 @@
  * Date: 12/10/15
  * Time: 12:51 PM
  */
-class Link_Model
+class Link_Model extends model
 {
     private $title, $link, $description, $privacy_status, $uid, $lid = 0;
 

@@ -25,7 +25,7 @@ class Link_Controller extends Controller
     {
         if (!isset($_POST['add']))
         {
-            $this->view->render('addlink_view.php', 'addlink_view.php');
+           // $this->view->render('addlink_view.php', 'addlink_view.php');
         }
         if (isset($_POST['add']))
         {
@@ -46,7 +46,7 @@ class Link_Controller extends Controller
 
         if (!isset($_POST['edit']))
         {
-            $this->view->render('link_edit_view.php', 'template_view.php', $edited_link);
+          //  $this->view->render('link_edit_view.php', 'template_view.php', $edited_link);
         }
 
         if (isset($_POST['edit']))
@@ -62,12 +62,12 @@ class Link_Controller extends Controller
     function action_show_all()
     {
         $links = $this->model->get_all_public_links();
-        $this->view->render('main_view.php', 'main_view.php', $links);
+       // $this->view->render('main_view.php', 'main_view.php', $links);
     }
 
     function action_show_my()
     {
         $links = $this->model->get_links_by_uid($_SESSION['uid']);
-        $this->view->render('main_view.php', 'main_view.php', $links);
+       // $this->view->render('main_view.php', 'main_view.php', $links);
     }
 }

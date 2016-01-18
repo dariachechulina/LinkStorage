@@ -8,8 +8,14 @@
  */
 class Main_Controller extends Controller
 {
+
+    function __construct()
+    {
+        $this->view = new Main_View();
+    }
+
     function action_index()
     {
-        $this->view->render('main_view.php', 'main_view.php');
+        $this->view->render();
     }
 }

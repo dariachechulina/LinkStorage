@@ -10,13 +10,14 @@ class Main_View extends view
 {
     private $head;
     private $body;
-    static public $content_view;
+    static public $content_view = '';
 
     public function __construct()
     {
         $this->template = '<!DOCTYPE html>
                             <head> %s </head>
-                            <body> %s </body>';
+                            <body> %s </body>
+                            ';
 
         $this->head = new Head_View();
         $this->body = new Body_View();

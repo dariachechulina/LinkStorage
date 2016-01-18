@@ -27,13 +27,12 @@ class view
 
     public function render()
     {
-        //include 'views/'.$template_view;
         if(method_exists($this, 'prepare_args'))
         {
             $this->prepare_args();
         }
 
-        print call_user_func('sprintf', array_merge(array($this->template), $this->args));
+        print call_user_func_array('sprintf', array_merge(array($this->template), $this->args));
     }
 
 }

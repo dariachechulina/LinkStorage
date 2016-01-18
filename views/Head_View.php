@@ -8,5 +8,8 @@
  */
 class Head_View extends view
 {
-
+    function __construct()
+    {
+        $this->template = '<h1>Hello!!!!!!!!!!!!!!!!!!!!</h1>';
+    }
 }

@@ -12,15 +12,26 @@ class Body_View extends view
 
     public function __construct()
     {
-        $this->template = '<header> %s </header>
-                           <content> %s </content>
-                           <footer> %s </footer>';
+        //$this->template = '<header> %s </header>
+        //                   <content> %s </content>
+         //                  <footer> %s </footer>';
 
-        $this->header = new Header_View();
-        $this->content = new Content_View();
-        $this->footer = new Footer_View();
+        $this->template = '<div class="header">
+                            Logo, navigation, et cetera goes in here
+                            </div>
+                            <div class="content">
+                            <h1>Header in here</h1>
+                             <p>Paragraph in here</p>
+                            </div>
+                            <div class="footer">
+                             Footer content goes in here
+                              </div>';
 
-        $this->args = array($this->header, $this->content, $this->footer);
+       // $this->header = new Header_View();
+       // $this->content = new Content_View();
+        //$this->footer = new Footer_View();
+
+       // $this->args = array($this->header, $this->content, $this->footer);
     }
 
 }

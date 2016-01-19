@@ -8,8 +8,12 @@
  */
 class Head_View extends view
 {
+    public $parent_args = array();
+
     function __construct()
     {
-        $this->template = '<h1>Hello!!!!!!!!!!!!!!!!!!!!</h1>';
+        $this->template = '<title> Link Storage </title>
+                            <link href="../style.css" rel="stylesheet">
+                            <link href="../bootstrap/css/bootstrap.css" rel="stylesheet">';
     }
 }

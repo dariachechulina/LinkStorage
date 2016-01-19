@@ -10,13 +10,12 @@ class Link_Controller extends Controller
 {
     function __construct()
     {
-        $this->model = new Link_Model();
-        $this->view = new View();
+        //$this->model = new Link_Model();
+        //->view = new View();
     }
 
     function action_index()
     {
-        #$this->view->render('first_view.php', 'first_view.php');
         $this->model->set_title('DASHA');
         #$this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
     }
@@ -67,7 +66,10 @@ class Link_Controller extends Controller
 
     function action_show_my()
     {
-        $links = $this->model->get_links_by_uid($_SESSION['uid']);
+        $this->model = new Link_Model();
+        $params = $this->model->get_links_by_uid($_SESSION['uid']);
+        $this->view = new Main_View(array('cont_view' => 'Links', 'my_links' => $params));
+        $this->view->render();
        // $this->view->render('main_view.php', 'main_view.php', $links);
     }
 }

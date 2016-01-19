@@ -11,26 +11,40 @@ class User_Controller extends Controller
     function __construct()
     {
         $this->model = new User_Model();
-        $this->view = new View();
+
     }
     function action_index()
     {
-        #$this->view->render('first_view.php', 'first_view.php');
         $this->model->set_login('DASHA');
-       // $this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
     }
 
     function action_login()
     {
         if (!isset($_POST['log']))
         {
-           // $this->view->render('login_view.php', 'login_view.php');
+            $this->view = new Main_View(array('cont_view' => 'Login'));
+            $this->view->render();
+
         }
         else
         {
             $this->model->set_login($_POST['login']);
             $this->model->set_password($_POST['pass']);
-            $this->model->login();
+            $log = $this->model->login();
+
+            if (isset(User_Model::$error_pull['login_err']))
+            {
+                //print User_Model::$error_pull['login_err'];
+                $params = array('login' => $_POST['login'], 'pass' => $_POST['pass']);
+                $this->view = new Main_View(array('cont_view' => 'Login', 'log_data' => $params));
+                $this->view->render();
+            }
+
+            if ($log)
+            {
+                header("refresh:0; url=/");
+            }
+
         }
     }
 
@@ -38,7 +52,8 @@ class User_Controller extends Controller
     {
         if (!isset($_POST['register']))
         {
-           // $this->view->render('register_view.php', 'register_view.php');
+            $this->view = new Main_View(array('cont_view' => 'Register'));
+            $this->view->render();
         }
         if (isset($_POST['register']))
         {
@@ -48,7 +63,19 @@ class User_Controller extends Controller
             $this->model->set_name($_POST['name']);
             $this->model->set_surname($_POST['surname']);
 
-            $this->model->register($_POST['repass']);
+            $reg = $this->model->register($_POST['repass']);
+
+            if ($reg)
+            {
+                header ("refresh:0; url=/");
+            }
+
+            if (isset(User_Model::$error_pull['register_err']))
+            {
+                $params = array('name' => $_POST['name'], 'surname' => $_POST['surname'], 'email' => $_POST['email'], 'login' => $_POST['login']);
+                $this->view = new Main_View(array('cont_view' => 'Register', 'reg_data' => $params));
+                $this->view->render();
+            }
         }
 
     }
@@ -79,7 +106,12 @@ class User_Controller extends Controller
         }
 
         return true;
+    }
 
+    function action_logout()
+    {
+        $this->model->logout();
+        header("Location: /");
     }
 
 }

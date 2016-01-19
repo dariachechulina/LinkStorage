@@ -9,29 +9,28 @@
 class Body_View extends view
 {
     private $header, $content, $footer;
+    public $parent_args = array();
 
-    public function __construct()
+    public function __construct(array $params)
     {
-        //$this->template = '<header> %s </header>
-        //                   <content> %s </content>
-         //                  <footer> %s </footer>';
 
         $this->template = '<div class="header">
-                            Logo, navigation, et cetera goes in here
+                            %s
                             </div>
                             <div class="content">
-                            <h1>Header in here</h1>
-                             <p>Paragraph in here</p>
+                             %s
                             </div>
-                            <div class="footer">
-                             Footer content goes in here
+                            <div class="footer" align="center" >
+                              <p>Link Storage. Daria <span class="glyphicon glyphicon-copyright-mark"></span> 2015-2016</p>
                               </div>';
 
-       // $this->header = new Header_View();
-       // $this->content = new Content_View();
+        $this->parent_args = $params;
+        $this->header = new Header_View();
+        $this->content = new Content_View(array($this));
+
         //$this->footer = new Footer_View();
 
-       // $this->args = array($this->header, $this->content, $this->footer);
+       $this->args = array($this->header, $this->content);
     }
 
 }

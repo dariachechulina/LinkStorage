@@ -6,6 +6,8 @@ class User_Model extends model
 {
     private $login, $email, $pass, $name, $surname, $status = 0, $role = 'user', $uid = 0;
 
+    static $error_pull = array();
+
     public function get_login()
     {
         return $this->login;
@@ -110,13 +112,13 @@ class User_Model extends model
         $length = count($result);
         if ($length == 0)
         {
-            echo "no such user";
+            self::$error_pull['login_err'] = "No such user";
             return false;
         }
 
         if ($result[0]['pass'] != $this->pass)
         {
-            echo "incorrect password";
+            self::$error_pull['login_err'] = "Incorrect password";
             return false;
 
         }
@@ -127,14 +129,19 @@ class User_Model extends model
         $this->role = $result[0]['role'];
 
         return true;
-        #return "success";
     }
 
     private function validate_register_info($repass)
     {
+        if (strcmp($this->login, '') == 0 || strcmp($this->pass, '') == 0 || strcmp($this->email, '') == 0)
+        {
+            //echo "Please, fill all required fields";
+            self::$error_pull['register_err'] = 'Please, fill all required fields';
+            return false;
+        }
         if ($this->pass != $repass)
         {
-            echo "Password don't match. Try again";
+            self::$error_pull['register_err'] = "Password don't match. Try again";
             return false;
             #return "Password don't match. Try again";
         }
@@ -142,7 +149,7 @@ class User_Model extends model
         $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
         if (!preg_match($regex, $this->email))
         {
-            echo "Invalid email";
+            self::$error_pull['register_err'] = "Invalid email";
             return false;
             #return "Invalid email";
         }
@@ -154,7 +161,7 @@ class User_Model extends model
         $length = count($result);
         if ($length != 0)
         {
-            echo "User with such login exists. Try again";
+            self::$error_pull['register_err'] = "User with such login exists. Try again";
             return false;
             #return "User with such login exists. Try again";
         }
@@ -164,7 +171,7 @@ class User_Model extends model
         $length = count($result);
         if ($length != 0)
         {
-            echo "User with such email exists. Try again";
+            self::$error_pull['register_err'] = "User with such email exists. Try again";
             return false;
             #return "User with such email exists. Try again";
         }
@@ -190,10 +197,10 @@ class User_Model extends model
             return false;
         }
 
-        session_start();
         $_SESSION['login'] = $this->login;
         $_SESSION['uid'] = $this->uid;
         echo $_SESSION['login'] . ", you are successfully logged in";
+
         return true;
     }
 

@@ -87,11 +87,47 @@ class Link_Model extends model
         return $result_link;
     }
 
+    public function get_all_links()
+    {
+        if (isset($_SESSION['uid']))
+        {
+            $logged_user = new User_Model();
+            $logged_user = $logged_user->get_user_by_id($_SESSION['uid']);
+            if (strcmp($logged_user->get_role(), 'user') !== 0)
+            {
+                global $conn;
+                $res = $conn->query("SELECT * FROM links", PDO::FETCH_LAZY);
+                $links = array();
+                $i = 0;
+                foreach ($res as $row)
+                {
+                    $cur_link = new Link_Model();
+                    $cur_link->set_title($row['title']);
+                    $cur_link->set_link($row['link']);
+                    $cur_link->set_description($row['description']);
+                    $cur_link->set_privacy_status($row['privacy_status']);
+                    $cur_link->set_uid($row['uid']);
+                    $cur_link->set_lid($row['lid']);
+                    $links[$i] = $cur_link;
+                    $i++;
+                }
+
+                return $links;
+            }
+        }
+
+        else
+        {
+            $links = array();
+            return $links;
+        }
+    }
+
     public function get_all_public_links()
     {
         global $conn;
         $res = $conn->query("SELECT * FROM links WHERE  privacy_status = 'public'", PDO::FETCH_LAZY);
-        $links = array(count($res));
+        $links = array();
         $i = 0;
         foreach ($res as $row)
         {
@@ -135,7 +171,7 @@ class Link_Model extends model
     {
         global $conn;
         $res = $conn->query("SELECT * FROM links WHERE uid = $uid", PDO::FETCH_LAZY);
-        $links = array(count($res));
+        $links = array();
         $i = 0;
         foreach ($res as $row)
         {

@@ -105,6 +105,11 @@ class User_Model extends model
 
     private function validate_login_info()
     {
+        if (strcmp($this->login, '') == 0)
+        {
+            self::$error_pull['login_err'] = "Invalid login";
+            return false;
+        }
         global $conn;
         $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
@@ -197,9 +202,7 @@ class User_Model extends model
             return false;
         }
 
-        $_SESSION['login'] = $this->login;
-        $_SESSION['uid'] = $this->uid;
-        echo $_SESSION['login'] . ", you are successfully logged in";
+
 
         return true;
     }
@@ -265,6 +268,31 @@ class User_Model extends model
         $result_user = $query->fetchObject('User_Model');
 
         return $result_user;
+    }
+
+    public function get_all_users()
+    {
+        global $conn;
+        $res = $conn->query("SELECT * FROM userdb", PDO::FETCH_LAZY);
+        $users = array(count($res));
+        $i = 0;
+        foreach ($res as $row)
+        {
+            $cur_user = new User_Model();
+            $cur_user->set_login($row['login']);
+            $cur_user->set_password($row['pass']);
+            $cur_user->set_email($row['email']);
+            $cur_user->set_role($row['role']);
+            $cur_user->set_status($row['status']);
+            $cur_user->set_name($row['name']);
+            $cur_user->set_surname($row['surname']);
+            $cur_user->set_uid($row['uid']);
+
+            $users[$i] = $cur_user;
+            $i++;
+        }
+
+        return $users;
     }
 
 }

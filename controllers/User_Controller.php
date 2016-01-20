@@ -42,6 +42,16 @@ class User_Controller extends Controller
 
             if ($log)
             {
+                $_SESSION['login'] = $this->model->get_login();
+                $_SESSION['uid'] = $this->model->get_uid();
+                //$_SESSION['role'] = $this->model->get_role();
+                $user = new User_Model();
+                $user = $user->get_user_by_id($_SESSION['uid']);
+
+                global $user;
+                var_dump($user);
+
+
                 header("refresh:0; url=/");
             }
 
@@ -83,33 +93,50 @@ class User_Controller extends Controller
     function action_edit($uid)
     {
         $edited_user = $this->model->get_user_by_id($uid);
+        $this->model = $this->model->get_user_by_id($_SESSION['uid']);
 
         if (!isset($_POST['edit']))
         {
-            //$this->view->render('edit_view.php', 'template_view.php', array($edited_user, $this->model->get_role()));
+            $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $edited_user, 'role' => $this->model->get_role()));
+            $this->view->render();
         }
 
         if (isset($_POST['edit']))
         {
-            $edited_user->set_password($_POST['pass']);
-            $edited_user->set_email($_POST['email']);
+            if (strcmp($_POST['pass'], '') !== 0)
+            {
+                $edited_user->set_password($_POST['pass']);
+            }
+
             $edited_user->set_name($_POST['name']);
             $edited_user->set_surname($_POST['surname']);
 
-            if ($this->model->get_role() == 'admin')
+            if ($this->model->get_role() == 'admin' ||
+                $this->model->get_role() == 'editor')
             {
                 $edited_user->set_status($_POST['status']);
                 $edited_user->set_role($_POST['role']);
             }
 
             $edited_user->save();
+            header('Location: /');
         }
 
         return true;
     }
 
+    function action_show_users()
+    {
+        $this->model = new User_Model();
+        $params = $this->model->get_all_users();
+        $this->view = new Main_View(array('cont_view' => 'Users', 'all_users' => $params, 'role' => $_SESSION['role']));
+        $this->view->render();
+    }
+
     function action_logout()
     {
+        $this->view = new Main_View(array('cont_view' => 'Logout'));
+        $this->view->render();
         $this->model->logout();
         header("Location: /");
     }

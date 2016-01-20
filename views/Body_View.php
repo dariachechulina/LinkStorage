@@ -20,9 +20,14 @@ class Body_View extends view
                             <div class="content">
                              %s
                             </div>
-                            <div class="footer" align="center" >
-                              <p>Link Storage. Daria <span class="glyphicon glyphicon-copyright-mark"></span> 2015-2016</p>
-                              </div>';
+                            <div class="page-wrapper">
+
+                            <div class="page-buffer"></div>
+                            </div>
+                            <div class="page-footer" align="center">
+                            <p>Link Storage. Daria <span class="glyphicon glyphicon-copyright-mark"></span> 2015-2016</p>
+
+                            </div>';
 
         $this->parent_args = $params;
         $this->header = new Header_View();

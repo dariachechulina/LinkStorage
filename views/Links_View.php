@@ -19,7 +19,7 @@ class Links_View extends view
             $this->template = '%s';
             $links = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['all_links'];
             $table_begin = '<div class="container">
-  <h2>Public links</h2>
+  <h2>Links</h2>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -54,7 +54,7 @@ class Links_View extends view
             $this->template = '%s';
             $links = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['my_links'];
             $table_begin = '<div class="container">
-  <h2>Public links</h2>
+  <h2>My links</h2>
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -65,24 +65,36 @@ class Links_View extends view
       </tr>
     </thead>
     <tbody>';
+
             $table_rows = '';
-            for ($i = 0; $i < count($links); $i++)
+            if (count($links) != 0)
             {
+                for ($i = 0; $i < count($links); $i++)
+                {
 
-                $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() .'</td>' .
-                    '<td>' . $links[$i]->get_link() .'</td>' .
-                    '<td>' . $links[$i]->get_description() .'</td>' .
-                    '<td>' . $links[$i]->get_privacy_status() .'</td>' .'</tr>';
-                // var_dump($table_rows[$i]);
+                    $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() .'</td>' .
+                        '<td>' . $links[$i]->get_link() .'</td>' .
+                        '<td>' . $links[$i]->get_description() .'</td>' .
+                        '<td>' . $links[$i]->get_privacy_status() .'</td>' .'</tr>';
+                    // var_dump($table_rows[$i]);
 
+                }
+
+                $table_end = '</tbody>
+                             </table>
+                             </div>';
+
+                $str_arg = $table_begin . $table_rows . $table_end;
+                $this->args = array($str_arg);
             }
 
-            $table_end = '</tbody>
-  </table>
-</div>';
+            else
+            {
+                $message = '<h2> You have no added links </h2>';
+                $this->args = array($message);
+            }
 
-            $str_arg = $table_begin . $table_rows . $table_end;
-            $this->args = array($str_arg);
+
             //var_dump($this->args);
         }
 

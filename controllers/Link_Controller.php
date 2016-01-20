@@ -10,7 +10,7 @@ class Link_Controller extends Controller
 {
     function __construct()
     {
-        //$this->model = new Link_Model();
+        $this->model = new Link_Model();
         //->view = new View();
     }
 
@@ -24,7 +24,8 @@ class Link_Controller extends Controller
     {
         if (!isset($_POST['add']))
         {
-           // $this->view->render('addlink_view.php', 'addlink_view.php');
+            $this->view = new Main_View(array('cont_view' => 'Add'));
+            $this->view->render();
         }
         if (isset($_POST['add']))
         {
@@ -36,6 +37,10 @@ class Link_Controller extends Controller
             $this->model->set_uid($_SESSION['uid']);
 
             $this->model->save();
+
+            header('Location: /');
+
+
         }
     }
 
@@ -66,7 +71,7 @@ class Link_Controller extends Controller
 
     function action_show_my()
     {
-        $this->model = new Link_Model();
+        //$this->model = new Link_Model();
         $params = $this->model->get_links_by_uid($_SESSION['uid']);
         $this->view = new Main_View(array('cont_view' => 'Links', 'my_links' => $params));
         $this->view->render();

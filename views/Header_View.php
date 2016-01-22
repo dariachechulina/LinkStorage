@@ -14,7 +14,7 @@ class Header_View extends view
         {
             $logged_user = new User_Model();
             $logged_user = $logged_user->get_user_by_id($_SESSION['uid']);
-            if (strcmp($logged_user->get_role(), 'user') == 0)
+            if (strcmp($logged_user->get_role(), 'admin') !== 0)
             {
                 $this->template = '<nav class="navbar navbar-inverse">
   <div class="container-fluid">

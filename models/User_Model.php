@@ -1,7 +1,5 @@
 <?php
 
-require_once 'Activation_Model.php';
-
 class User_Model extends model
 {
     private $login, $email, $pass, $name, $surname, $status = 0, $role = 'user', $uid = 0;
@@ -201,9 +199,6 @@ class User_Model extends model
             $this->send_email();
             return false;
         }
-
-
-
         return true;
     }
 

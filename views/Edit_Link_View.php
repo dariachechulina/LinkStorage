@@ -14,26 +14,52 @@ class Edit_Link_View extends view
     {
         $this->parent_args = $params;
         $edit_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['edit_data'];
-        $role = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['role'];
+        global $logged_user;
 
-        if (strcmp($role, 'user') !== 0)
-        {
-            $this->template = '<div class="container">
+        if (!is_object($logged_user)) {
+            $this->template = '%s';
+            $this->args = array(new Access_Denied_View());
+            return;
+        }
+
+        $role = $logged_user->get_role();
+
+        if (!is_object($edit_data) && strcmp($role, 'user') !== 0) {
+            $this->template = '%s';
+            $this->args = array(new Not_Found_View());
+            return;
+        }
+
+        if (!is_object($edit_data) && strcmp($role, 'user') == 0) {
+            $this->template = '%s';
+            $this->args = array(new Access_Denied_View());
+            return;
+        }
+
+        if (is_object($logged_user)) {
+
+
+            $privacy = '';
+            if (strcmp($edit_data->get_privacy_status(), 'private') == 0)
+            {
+                $privacy = 'checked=""';
+            }
+
+            if (strcmp($role, 'user') !== 0) {
+                $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
-        <h2 class="form-signin-heading" align="center">Edit profile</h2>
-        <input type="text" class="input-block-level" name="name" value='. $edit_data->get_name() .' placeholder="Login">
-        <input type=text class="input-block-level" name="surname" value='. $edit_data->get_surname() .' placeholder="Surname"> <br> <br>
-
-        <input type=text class="input-block-level" disabled="true" name="login" value='. $edit_data->get_login() .' placeholder="* Login" > <br> <br>
-        <input type=text class="input-block-level" name="role" value='. $edit_data->get_role() .' placeholder="Surname"> <br> <br>
-        <input type=text class="input-block-level" name="status" value='. $edit_data->get_status() .' placeholder="Surname"> <br> <br>
-        <p align="center">Activation status: &nbsp; <input type=checkbox class="input-block-level" name="status" value='. $edit_data->get_status() .' placeholder="Surname"> <br> <br> </p>
-        <input type="password" class="input-block-level" name="pass" placeholder="* Password" > <br> <br>
+        <h2 class="form-signin-heading" align="center">Edit link</h2> <br>
+        <input type="text" class="input-block-level" name="title" placeholder="Title" value=' . $edit_data->get_title() . ' ><br> <br>
+        <input type=text class="input-block-level" name="link" placeholder="Link" value=' . $edit_data->get_link() . ' > <br> <br>
+        <input type=text class="input-block-level" name="description" placeholder="Description" value=' . $edit_data->get_description() . ' >
+        <div class="checkbox">
+      <p align="center"><label><input align="center" type="checkbox" name="check"'. $privacy.'> Private link </label></p>
+    </div>
 
 
-        <p align="center"> <button class="btn btn-large btn-primary" type="submit" name="edit">Edit</button> &nbsp;
-        <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>
+        <p align="center"> <button class="btn btn-large btn-primary" type="submit" name="edit"><span class="glyphicon glyphicon-floppy-save"></span> &nbsp;Save</button> &nbsp;
+        <button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>
  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-sm">
 
@@ -56,24 +82,25 @@ class Edit_Link_View extends view
 
     </form>
 </div>';
+            }
 
-        }
-
-        else
-        {
-            $this->template = '<div class="container">
+            if (strcmp($role, 'user') == 0 &&
+                ($edit_data->get_uid() == $logged_user->get_uid())
+            )
+            {
+                $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
-        <h2 class="form-signin-heading" align="center">Edit profile</h2>
-        <input type="text" class="input-block-level" name="name" value='. $edit_data->get_name() .' placeholder="Login">
-        <input type=text class="input-block-level" name="surname" value='. $edit_data->get_surname() .' placeholder="Surname"> <br> <br>
+        <h2 class="form-signin-heading" align="center">Edit link</h2> <br>
+        <input type="text" class="input-block-level" name="title" value=' . $edit_data->get_title() . ' placeholder="Title"> <br> <br>
+        <input type=text class="input-block-level" name="link" value=' . $edit_data->get_link() . ' placeholder="Link"> <br> <br>
+        <input type=text class="input-block-level" name="description" value=' . $edit_data->get_description() . ' placeholder="Description">
+        <div class="checkbox">
+      <p align="center"><label><input align="center" type="checkbox" name="check"'. $privacy.'> Private link </label></p>
+    </div>
 
-        <input type=text class="input-block-level" disabled="true" name="login" value='. $edit_data->get_login() .' placeholder="* Login" > <br> <br>
-        <input type="password" class="input-block-level" name="pass" placeholder="* Password" > <br> <br>
-
-
-        <p align="center"> <button class="btn btn-large btn-primary" type="submit" name="edit">Edit</button> &nbsp;
-        <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>
+        <p align="center"> <button class="btn btn-large btn-primary" type="submit" name="edit"><span class="glyphicon glyphicon-floppy-save"></span> &nbsp;Save</button> &nbsp;
+        <button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>
  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-sm">
 
@@ -93,9 +120,18 @@ class Edit_Link_View extends view
 
     </div>
   </div>
-  </form>
 
+    </form>
 </div>';
+            }
+
+            if (strcmp($role, 'user') == 0 &&
+                ($edit_data->get_uid() !== $logged_user->get_uid())
+            ) {
+
+                $this->template = '%s';
+                $this->args = array(new Access_Denied_View());
+            }
         }
     }
 

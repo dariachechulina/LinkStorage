@@ -7,13 +7,22 @@ class Activation_Controller extends Controller
     function __construct()
     {
         $this->model = new Activation_Model();
-        $this->view = new View();
     }
 
     function action_index()
     {
-        $cur_hash = $_GET['code'];
-        $result_status = $this->model->activate_user($cur_hash);
-        echo $result_status;
+        if (isset($_GET['code']))
+        {
+            $cur_hash = $_GET['code'];
+            $this->model->activate_user($cur_hash);
+            $this->view = new Main_View(array('cont_view' => 'Activation', 'status' => Activation_Model::$error_pull));
+            $this->view->render();
+        }
+
+        else
+        {
+            $this->view = new Main_View(array('cont_view' => 'Not_Found'));
+            $this->view->render();
+        }
     }
 }

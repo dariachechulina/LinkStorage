@@ -9,6 +9,7 @@
 class Link_Model extends model
 {
     private $title, $link, $description, $privacy_status, $uid, $lid = 0;
+    public static $error_pull = array();
 
     public function get_title()
     {
@@ -60,20 +61,40 @@ class Link_Model extends model
         $this->lid = $lid_;
     }
 
+    public function validation()
+    {
+        if (strcmp($this->title, '') == 0 ||
+            strcmp($this->link, '') == 0 ||
+            strcmp($this->description, '') == 0)
+        {
+            self::$error_pull['validation_err'] = 'Fill all fields';
+            return false;
+        }
+        return true;
+    }
+
     public function save()
     {
         global $conn;
 
-        if ($this->lid == 0)
-        {
-            $query = "INSERT INTO links (title, link, description, privacy_status, uid) VALUES ('$this->title', '$this->link', '$this->description', '$this->privacy_status', '$this->uid')";
-            $conn->exec($query);
-            $this->lid = $conn->lastInsertId();
+        $validation_status = $this->validation();
+
+        if ($validation_status) {
+
+            if ($this->lid == 0) {
+                $query = "INSERT INTO links (title, link, description, privacy_status, uid) VALUES ('$this->title', '$this->link', '$this->description', '$this->privacy_status', '$this->uid')";
+                $conn->exec($query);
+                $this->lid = $conn->lastInsertId();
+            } else {
+                $query = "UPDATE links SET title = '$this->title', link = '$this->link', description = '$this->description', privacy_status = '$this->privacy_status', uid = $this->uid WHERE lid = '$this->lid'";
+                $conn->exec($query);
+            }
+            return;
         }
+
         else
         {
-            $query = "UPDATE links SET title = '$this->title', link = '$this->link', description = '$this->description', privacy_status = '$this->privacy_status', uid = $this->uid WHERE lid = '$this->lid'";
-            $conn->exec($query);
+            return;
         }
     }
 

@@ -7,7 +7,7 @@
  */
 
 
-function __autoload($className)
+function autoload($className)
 {
     if (file_exists('views/'. $className . '.php'))
     {

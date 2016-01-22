@@ -13,6 +13,7 @@ class User_Controller extends Controller
         $this->model = new User_Model();
 
     }
+
     function action_index()
     {
         $this->model->set_login('DASHA');
@@ -20,37 +21,28 @@ class User_Controller extends Controller
 
     function action_login()
     {
-        if (!isset($_POST['log']))
-        {
+        if (!isset($_POST['log'])) {
             $this->view = new Main_View(array('cont_view' => 'Login'));
             $this->view->render();
 
-        }
-        else
-        {
+        } else {
             $this->model->set_login($_POST['login']);
             $this->model->set_password($_POST['pass']);
             $log = $this->model->login();
 
-            if (isset(User_Model::$error_pull['login_err']))
-            {
+            global $logged_user;
+            var_dump($logged_user);
+
+            if (isset(User_Model::$error_pull['login_err'])) {
                 //print User_Model::$error_pull['login_err'];
                 $params = array('login' => $_POST['login'], 'pass' => $_POST['pass']);
                 $this->view = new Main_View(array('cont_view' => 'Login', 'log_data' => $params));
                 $this->view->render();
             }
 
-            if ($log)
-            {
+            if ($log) {
                 $_SESSION['login'] = $this->model->get_login();
                 $_SESSION['uid'] = $this->model->get_uid();
-                //$_SESSION['role'] = $this->model->get_role();
-                $user = new User_Model();
-                $user = $user->get_user_by_id($_SESSION['uid']);
-
-                global $user;
-                var_dump($user);
-
 
                 header("refresh:0; url=/");
             }
@@ -60,13 +52,11 @@ class User_Controller extends Controller
 
     function action_register()
     {
-        if (!isset($_POST['register']))
-        {
+        if (!isset($_POST['register'])) {
             $this->view = new Main_View(array('cont_view' => 'Register'));
             $this->view->render();
         }
-        if (isset($_POST['register']))
-        {
+        if (isset($_POST['register'])) {
             $this->model->set_login($_POST['login']);
             $this->model->set_password($_POST['pass']);
             $this->model->set_email($_POST['email']);
@@ -75,13 +65,11 @@ class User_Controller extends Controller
 
             $reg = $this->model->register($_POST['repass']);
 
-            if ($reg)
-            {
-                header ("refresh:0; url=/");
+            if ($reg) {
+                header("refresh:0; url=/");
             }
 
-            if (isset(User_Model::$error_pull['register_err']))
-            {
+            if (isset(User_Model::$error_pull['register_err'])) {
                 $params = array('name' => $_POST['name'], 'surname' => $_POST['surname'], 'email' => $_POST['email'], 'login' => $_POST['login']);
                 $this->view = new Main_View(array('cont_view' => 'Register', 'reg_data' => $params));
                 $this->view->render();
@@ -90,36 +78,54 @@ class User_Controller extends Controller
 
     }
 
-    function action_edit($uid)
+    function action_edit($uid = null)
     {
-        $edited_user = $this->model->get_user_by_id($uid);
-        $this->model = $this->model->get_user_by_id($_SESSION['uid']);
+        global $logged_user;
 
-        if (!isset($_POST['edit']))
-        {
-            $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $edited_user, 'role' => $this->model->get_role()));
+        if ($uid == null) {
+            $this->view = new Main_View(array('cont_view' => 'Not_Found'));
             $this->view->render();
         }
+        else {
+            $edited_user = $this->model->get_user_by_id($uid);
 
-        if (isset($_POST['edit']))
-        {
-            if (strcmp($_POST['pass'], '') !== 0)
-            {
-                $edited_user->set_password($_POST['pass']);
+            if (!isset($_POST['edit'])) {
+                $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $edited_user));
+                $this->view->render();
             }
 
-            $edited_user->set_name($_POST['name']);
-            $edited_user->set_surname($_POST['surname']);
+            if (isset($_POST['edit'])) {
 
-            if ($this->model->get_role() == 'admin' ||
-                $this->model->get_role() == 'editor')
-            {
-                $edited_user->set_status($_POST['status']);
-                $edited_user->set_role($_POST['role']);
+                $active_status = '0';
+                if (isset($_POST['check']) && strcmp($_POST['check'], 'on') == 0)
+                {
+                    $active_status = '1';
+                }
+
+                if (isset($_POST['pass']) && strcmp($_POST['pass'], '') !== 0) {
+                    $edited_user->set_password($_POST['pass']);
+                }
+
+                $edited_user->set_name($_POST['name']);
+                $edited_user->set_surname($_POST['surname']);
+
+                if ($logged_user->get_role() == 'admin'){
+                    $edited_user->set_status($active_status);
+                    if (isset($_POST['role']))
+                    {
+                        $edited_user->set_role($_POST['role']);
+                    }
+                    $edited_user->save();
+                    header('Location: /User/show_users');
+                }
+
+                else
+                {
+                    $edited_user->save();
+                    header('Location: /');
+                }
+
             }
-
-            $edited_user->save();
-            header('Location: /');
         }
 
         return true;
@@ -127,9 +133,8 @@ class User_Controller extends Controller
 
     function action_show_users()
     {
-        $this->model = new User_Model();
         $params = $this->model->get_all_users();
-        $this->view = new Main_View(array('cont_view' => 'Users', 'all_users' => $params, 'role' => $_SESSION['role']));
+        $this->view = new Main_View(array('cont_view' => 'Users', 'all_users' => $params));
         $this->view->render();
     }
 
@@ -139,6 +144,11 @@ class User_Controller extends Controller
         $this->view->render();
         $this->model->logout();
         header("Location: /");
+    }
+
+    function action_delete()
+    {
+        var_dump($_POST);
     }
 
 }

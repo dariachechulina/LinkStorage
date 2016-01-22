@@ -5,6 +5,8 @@ class Activation_Model
 {
     private $uid, $hash, $exp_time;
 
+    public static $error_pull = array();
+
     public function send($uid_, $email_)
     {
         $this->uid = $uid_;
@@ -14,23 +16,9 @@ class Activation_Model
         $result = $query->fetchAll();
         $to = $result[0]['login'];
 
-        include 'libs/class.phpmailer.php';
-        date_default_timezone_set('Etc/UTC');
-        require 'libs/PHPMailerAutoload.php';
-        $mail = new PHPMailer;
-        $mail->isSMTP();
-        $mail->SMTPDebug = 0;
-        $mail->Debugoutput = 'html';
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587;
-        $mail->SMTPSecure = 'tls';
-        $mail->SMTPAuth = true;
-        $mail->Username = "dashachechulina@gmail.com";
-        $mail->Password = "zyof cacq ieae cuxa";
-        $mail->setFrom('dashachechulina@gmail.com', 'Daria Chechulina');
-        $mail->addReplyTo('dashachechulina@gmail.com', 'Daria Chechulina');
+        global $mail;
+
         $mail->addAddress($email_, $to);
-        $mail->Subject = 'Account confirmation';
 
         $base_url='testtask/';
         $cur_exptime = date("y.m.d", time() - 2*(24*60*60));
@@ -38,7 +26,6 @@ class Activation_Model
         $this->hash = $activation;
         $this->exp_time = $cur_exptime;
 
-        #global $conn;
         $query = $conn->prepare("SELECT * FROM tmplinks WHERE uid = ?");
         $query->execute(array($uid_));
         $result = $query->fetchAll();
@@ -76,7 +63,8 @@ class Activation_Model
         $result = $query->fetchAll();
         if (count($result) == 0)
         {
-            return "expired";
+            self::$error_pull['msg'] = 'Link doesn\'t exist';
+            return;
         }
         $cur_uid = $result[0]["uid"];
 
@@ -90,11 +78,13 @@ class Activation_Model
         {
             $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
-            return "success";
+            self::$error_pull['msg'] = 'Your profile is successfully activated';
+            return;
         }
         else
         {
-            return "reused";
+            self::$error_pull['msg'] = 'Your profile has been already activated';
+            return;
         }
 
     }

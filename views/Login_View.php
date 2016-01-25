@@ -14,6 +14,7 @@ class Login_View extends view
     {
         $this->parent_args = $params;
         $log_data = array();
+
         if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data']))
         {
             $log_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data'];

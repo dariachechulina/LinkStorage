@@ -8,7 +8,7 @@
  */
 class model
 {
-    public function get_data()
+    public function is_mine($id)
     {
     }
 }

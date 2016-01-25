@@ -262,7 +262,7 @@ class User_Model extends model
         $query->execute(array($uid));
         $result_user = $query->fetchObject('User_Model');
 
-        return $result_user;
+        $this->copy($result_user);
     }
 
     public function get_all_users()
@@ -289,6 +289,33 @@ class User_Model extends model
 
         return $users;
     }
+
+
+    public function is_mine($id)
+    {
+        if ($this->get_uid() == $id)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function copy(User_Model $user)
+    {
+        $this->login = $user->get_login();
+        $this->pass = $user->get_password();
+        $this->email = $user->get_email();
+        $this->status = $user->get_status();
+        $this->role = $user->get_role();
+        $this->uid = $user->get_uid();
+        $this->name = $user->get_name();
+        $this->surname = $user->get_surname();
+    }
+
+
 
 }
 

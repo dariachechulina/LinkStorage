@@ -8,6 +8,8 @@
  */
 class User_Controller extends Controller
 {
+    private $resource_model = 'User_Model';
+
     function __construct()
     {
         $this->model = new User_Model();
@@ -87,10 +89,10 @@ class User_Controller extends Controller
             $this->view->render();
         }
         else {
-            $edited_user = $this->model->get_user_by_id($uid);
+            $this->model->get_user_by_id($uid);
 
             if (!isset($_POST['edit'])) {
-                $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $edited_user));
+                $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $this->model));
                 $this->view->render();
             }
 
@@ -103,25 +105,25 @@ class User_Controller extends Controller
                 }
 
                 if (isset($_POST['pass']) && strcmp($_POST['pass'], '') !== 0) {
-                    $edited_user->set_password($_POST['pass']);
+                    $this->model->set_password($_POST['pass']);
                 }
 
-                $edited_user->set_name($_POST['name']);
-                $edited_user->set_surname($_POST['surname']);
+                $this->model->set_name($_POST['name']);
+                $this->model->set_surname($_POST['surname']);
 
                 if ($logged_user->get_role() == 'admin'){
-                    $edited_user->set_status($active_status);
+                    $this->model->set_status($active_status);
                     if (isset($_POST['role']))
                     {
-                        $edited_user->set_role($_POST['role']);
+                        $this->model->set_role($_POST['role']);
                     }
-                    $edited_user->save();
+                    $this->model->save();
                     header('Location: /User/show_users');
                 }
 
                 else
                 {
-                    $edited_user->save();
+                    $this->model->save();
                     header('Location: /');
                 }
 
@@ -149,6 +151,11 @@ class User_Controller extends Controller
     function action_delete()
     {
         var_dump($_POST);
+    }
+
+    public function get_resource_model()
+    {
+        return $this->resource_model;
     }
 
 }

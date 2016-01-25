@@ -14,6 +14,7 @@ class Register_View extends view
     {
         $this->parent_args = $params;
         $reg_data = array();
+
         if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['reg_data']))
         {
             $reg_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['reg_data'];
@@ -65,12 +66,12 @@ class Register_View extends view
 
     <form class="form-signin" method="post" action="/User/register">
          <h3 class="form-signin-heading">' . User_Model::$error_pull['register_err'] . '</h3>
-        <input type=text class="input-block-level" name="name"  value='. $reg_data['name'] .'> <br> <br>
-        <input type=text class="input-block-level" name="surname"  value='. $reg_data['surname'] .'> <br> <br>
-        <input type=email class="input-block-level" name="email" value='. $reg_data['email'] .' id="1"> <br> <br>
-        <input type=text class="input-block-level" name="login"  value='. $reg_data['login'] .' id="2"> <br> <br>
-        <input type="password" class="input-block-level" name="pass" placeholder="* Password" value="" id="3"> <br> <br>
-        <input type="password" class="input-block-level" name="repass" placeholder="* Repeat password" value="" id="4"> <br> <br>
+        <input type=text class="input-block-level" name="name" placeholder="Name" value='. $reg_data['name'] .'> <br> <br>
+        <input type=text class="input-block-level" name="surname" placeholder="Surname" value='. $reg_data['surname'] .'> <br> <br>
+        <input type=email class="input-block-level" name="email" placeholder="* Email" value='. $reg_data['email'] .' > <br> <br>
+        <input type=text class="input-block-level" name="login" placeholder="* Login"  value='. $reg_data['login'] .' > <br> <br>
+        <input type="password" class="input-block-level" name="pass" placeholder="* Password" value="" > <br> <br>
+        <input type="password" class="input-block-level" name="repass" placeholder="* Repeat password" value="" > <br> <br>
 
         <p align="center"><button class="btn btn-large btn-primary" type="submit" name="register" >Sign up</button>
         <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>

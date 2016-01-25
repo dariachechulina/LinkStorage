@@ -15,26 +15,7 @@ class Edit_Link_View extends view
         $this->parent_args = $params;
         $edit_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['edit_data'];
         global $logged_user;
-
-        if (!is_object($logged_user)) {
-            $this->template = '%s';
-            $this->args = array(new Access_Denied_View());
-            return;
-        }
-
         $role = $logged_user->get_role();
-
-        if (!is_object($edit_data) && strcmp($role, 'user') !== 0) {
-            $this->template = '%s';
-            $this->args = array(new Not_Found_View());
-            return;
-        }
-
-        if (!is_object($edit_data) && strcmp($role, 'user') == 0) {
-            $this->template = '%s';
-            $this->args = array(new Access_Denied_View());
-            return;
-        }
 
         if (is_object($logged_user)) {
 
@@ -52,7 +33,10 @@ class Edit_Link_View extends view
         <h2 class="form-signin-heading" align="center">Edit link</h2> <br>
         <input type="text" class="input-block-level" name="title" placeholder="Title" value=' . $edit_data->get_title() . ' ><br> <br>
         <input type=text class="input-block-level" name="link" placeholder="Link" value=' . $edit_data->get_link() . ' > <br> <br>
-        <input type=text class="input-block-level" name="description" placeholder="Description" value=' . $edit_data->get_description() . ' >
+        <div class="form-group">
+  <textarea class="form-control" rows="5" id="comment" name="description" placeholder="Description">'. $edit_data->get_description() .'</textarea>
+</div>
+
         <div class="checkbox">
       <p align="center"><label><input align="center" type="checkbox" name="check"'. $privacy.'> Private link </label></p>
     </div>
@@ -94,8 +78,10 @@ class Edit_Link_View extends view
         <h2 class="form-signin-heading" align="center">Edit link</h2> <br>
         <input type="text" class="input-block-level" name="title" value=' . $edit_data->get_title() . ' placeholder="Title"> <br> <br>
         <input type=text class="input-block-level" name="link" value=' . $edit_data->get_link() . ' placeholder="Link"> <br> <br>
-        <input type=text class="input-block-level" name="description" value=' . $edit_data->get_description() . ' placeholder="Description">
-        <div class="checkbox">
+       <div class="form-group">
+  <textarea class="form-control" rows="5" id="comment" name="description" placeholder="Description">'. $edit_data->get_description() .'</textarea>
+</div>
+<div class="checkbox">
       <p align="center"><label><input align="center" type="checkbox" name="check"'. $privacy.'> Private link </label></p>
     </div>
 
@@ -123,14 +109,6 @@ class Edit_Link_View extends view
 
     </form>
 </div>';
-            }
-
-            if (strcmp($role, 'user') == 0 &&
-                ($edit_data->get_uid() !== $logged_user->get_uid())
-            ) {
-
-                $this->template = '%s';
-                $this->args = array(new Access_Denied_View());
             }
         }
     }

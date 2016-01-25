@@ -8,16 +8,12 @@
  */
 class Link_Controller extends Controller
 {
+    private $resource_model = 'Link_Model';
+
     function __construct()
     {
         $this->model = new Link_Model();
         //->view = new View();
-    }
-
-    function action_index()
-    {
-        $this->model->set_title('DASHA');
-        #$this->view->render('main_view.php', 'template_view.php', array($this->model, 'haha'));
     }
 
     function action_add()
@@ -59,11 +55,11 @@ class Link_Controller extends Controller
 
     function action_edit($lid)
     {
-        $edited_link = $this->model->get_link_by_id($lid);
+        $this->model->get_link_by_id($lid);
 
         if (!isset($_POST['edit']))
         {
-            $this->view = new Main_View(array('cont_view' => 'Edit_Link', 'edit_data' => $edited_link));
+            $this->view = new Main_View(array('cont_view' => 'Edit_Link', 'edit_data' => $this->model));
             $this->view->render();
         }
 
@@ -77,12 +73,23 @@ class Link_Controller extends Controller
             {
                 $privacy_status = 'public';
             }
-            $edited_link->set_title($_POST['title']);
-            $edited_link->set_link($_POST['link']);
-            $edited_link->set_description($_POST['description']);
-            $edited_link->set_privacy_status($privacy_status);
-            $edited_link->save();
+            $this->model->set_title($_POST['title']);
+            $this->model->set_link($_POST['link']);
+            $this->model->set_description($_POST['description']);
+            $this->model->set_privacy_status($privacy_status);
+            $this->model->save();
             header('Location: /Link/show_my');
+        }
+    }
+
+    function action_show($lid)
+    {
+        $this->model->get_link_by_id($lid);
+
+        //if (isset($_POST['show']))
+        {
+            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model));
+            $this->view->render();
         }
     }
 
@@ -96,5 +103,10 @@ class Link_Controller extends Controller
         $params = $this->model->get_links_by_uid($_SESSION['uid']);
         $this->view = new Main_View(array('cont_view' => 'Links', 'my_links' => $params));
         $this->view->render();
+    }
+
+    public function get_resource_model()
+    {
+        return $this->resource_model;
     }
 }

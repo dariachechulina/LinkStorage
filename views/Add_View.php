@@ -34,7 +34,9 @@ class Add_View extends view
         <h3 class="form-signin-heading"> Error: ' . Link_Model::$error_pull['validation_err'] . '</h3>
         <input type=text class="input-block-level" name="title" placeholder="Title" value=' . $add_data['title'] .'> <br> <br>
         <input type=text class="input-block-level" name="link" placeholder="Link" value=' . $add_data['link'] .'> <br> <br>
-        <input type=text class="input-block-level" name="description" placeholder="Description" value=' . $add_data['description'] .'> <br> <br>
+        <div class="form-group">
+  <textarea class="form-control" rows="5" id="comment"  name="description" placeholder="Description">'.$add_data['description'] .'</textarea>
+</div>
         <div class="checkbox">
       <p align="center"><label><input type="checkbox" name="check" '. $privacy.' > &nbsp; Private link</label></p>
     </div>
@@ -71,7 +73,9 @@ class Add_View extends view
         <h2 class="form-signin-heading" align="center"> </h2> <br>
         <input type=text class="input-block-level" name="title" placeholder="Title" value=""> <br> <br>
         <input type=text class="input-block-level" name="link" placeholder="Link" value=""> <br> <br>
-        <input type=text class="input-block-level" name="description" placeholder="Description" value="" id="1"> <br> <br>
+        <div class="form-group">
+  <textarea class="form-control" rows="5" id="comment" name="description" placeholder="Description"></textarea>
+</div>
         <div class="checkbox">
       <p align="center"><label><input type="checkbox" name="check"> &nbsp; Private link</label></p>
     </div>

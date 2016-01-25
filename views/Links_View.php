@@ -28,8 +28,6 @@ class Links_View extends view
     <thead>
       <tr>
         <th>Title</th>
-        <th>Link</th>
-        <th>Description</th>
                 <th>Private</th>
                 <th>Actions</th>
       </tr>
@@ -45,11 +43,11 @@ class Links_View extends view
                     }
 
                     $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() .'</td>' .
-                        '<td>' . $links[$i]->get_link() .'</td>' .
-                        '<td>' . $links[$i]->get_description() .
                         '<td> <input align="center" type="checkbox" disabled name="check"'. $privacy.'></td>' .
 
-                        '<td> <button class="btn btn-sm btn-warning" type="submit" onclick="location.href = \'/Link/edit/'.$links[$i]->get_lid().'\';" name="edit_link"><span class="glyphicon glyphicon-pencil"></span></button>
+                        '<td>
+                        <button class="btn btn-sm btn-success" type="submit" onclick="location.href = \'/Link/show/'.$links[$i]->get_lid().'\';" name="show_link"><span class="glyphicon glyphicon-eye-open"></span></button>
+                        <button class="btn btn-sm btn-warning" type="submit" onclick="location.href = \'/Link/edit/'.$links[$i]->get_lid().'\';" name="edit_link"><span class="glyphicon glyphicon-pencil"></span></button>
                         <button class="btn btn-sm btn-danger" type="submit" name="delete_link'.$i.'" data-toggle="modal" data-target="#myModal'.$i.'"><span class="glyphicon glyphicon-remove"></span></button>
          <div class="modal fade" id="myModal'.$i.'" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -86,8 +84,6 @@ class Links_View extends view
     <thead>
       <tr>
         <th>Title</th>
-        <th>Link</th>
-        <th>Description</th>
       </tr>
     </thead>
     <tbody>';
@@ -95,9 +91,7 @@ class Links_View extends view
                 for ($i = 0; $i < count($links); $i++)
                 {
 
-                    $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() .'</td>' .
-                        '<td>' . $links[$i]->get_link() .'</td>' .
-                        '<td>' . $links[$i]->get_description() .'</td> </tr>';
+                    $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() . '</td> </tr>';
                     // var_dump($table_rows[$i]);
 
                 }
@@ -109,7 +103,6 @@ class Links_View extends view
 
             $str_arg = $table_begin . $table_rows . $table_end;
             $this->args = array($str_arg);
-            //var_dump($this->args);
         }
 
         if(isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['my_links']))
@@ -123,8 +116,6 @@ class Links_View extends view
     <thead>
       <tr>
         <th>Title</th>
-        <th>Link</th>
-        <th>Description</th>
         <th>Private</th>
         <th> Actions </th>
       </tr>
@@ -143,11 +134,11 @@ class Links_View extends view
                     }
 
                     $table_rows = $table_rows . '<tr> <td>' . $links[$i]->get_title() .'</td>' .
-                        '<td>' . $links[$i]->get_link() .'</td>' .
-                        '<td>' . $links[$i]->get_description() .'</td>' .
                         '<td> <input align="center" type="checkbox" disabled name="check"'. $privacy.'></td>' .
 
-                        '<td> <button class="btn btn-sm btn-warning" type="submit" onclick="location.href = \'/Link/edit/'.$links[$i]->get_lid().'\';" name="edit_link"><span class="glyphicon glyphicon-pencil"></span></button>
+                        '<td>
+                        <button class="btn btn-sm btn-success" type="submit" onclick="location.href = \'/Link/show/'.$links[$i]->get_lid().'\';" name="show_link"><span class="glyphicon glyphicon-eye-open"></span></button>
+                        <button class="btn btn-sm btn-warning" type="submit" onclick="location.href = \'/Link/edit/'.$links[$i]->get_lid().'\';" name="edit_link"><span class="glyphicon glyphicon-pencil"></span></button>
                         <button class="btn btn-sm btn-danger" type="submit" name="delete_link'.$i.'" data-toggle="modal" data-target="#myModal'.$i.'"><span class="glyphicon glyphicon-remove"></span></button>
          <div class="modal fade" id="myModal'.$i.'" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -170,7 +161,6 @@ class Links_View extends view
 
     </div>
   </div>' .'</td>'. '</tr>';
-                    // var_dump($table_rows[$i]);
 
                 }
 
@@ -187,9 +177,6 @@ class Links_View extends view
                 $message = '<h2> You have no added links </h2>';
                 $this->args = array($message);
             }
-
-
-            //var_dump($this->args);
         }
 
     }

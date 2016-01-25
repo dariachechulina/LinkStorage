@@ -12,7 +12,7 @@ class Route
     {
         $controller_name = 'Main';
         $action_name = 'index';
-        $uid = NULL;
+        $id = NULL;
 
         $url_parts = parse_url($_SERVER['REQUEST_URI']);
         $routes = explode('/', $url_parts['path']);
@@ -28,21 +28,14 @@ class Route
 
         if ( !empty($routes[3]) )
         {
-            $uid = $routes[3];
+            $id = $routes[3];
         }
 
-        $model_name = $controller_name . "_Model";
-        $controller_name = $controller_name . '_Controller';
-        $action_name = 'action_'.$action_name;
+        $controller_full_name = $controller_name . '_Controller';
+        $action_full_name = 'action_'.$action_name;
 
-        $model_file = $model_name.'.php';
-        $model_path = "models/".$model_file;
-        if(file_exists($model_path))
-        {
-            //include "models/".$model_file;
-        }
 
-        $controller_file = $controller_name.'.php';
+        $controller_file = $controller_full_name.'.php';
         $controller_path = "controllers/".$controller_file;
 
         if(file_exists($controller_path))
@@ -54,18 +47,34 @@ class Route
             Route::ErrorPage404();
         }
 
-        $controller = new $controller_name;
-        $action = $action_name;
+        $controller = new $controller_full_name;
+        $action = $action_full_name;
 
         if(method_exists($controller, $action))
         {
-            if ($uid == NULL)
+            $current_action = strtolower($controller_name. '_' . $action_name);
+
+            $res = $controller->action_allowed_status($current_action, $id);
+
+            if ($res == 'ok')
             {
-                $controller->$action();
+                if ($id == NULL)
+                {
+                    $controller->$action();
+                }
+                else
+                {
+                    $controller->$action($id);
+                }
             }
-            else
+            if ($res == 'access_denied')
             {
-                $controller->$action($uid);
+                Route::AccessDeniedPage();
+            }
+
+            if ($res == '404')
+            {
+                Route::ErrorPage404();
             }
         }
         else
@@ -77,7 +86,13 @@ class Route
 
     function ErrorPage404()
     {
-       $view = new Main_View(array('cont_view' => 'Not_Found'));
+        $view = new Main_View(array('cont_view' => 'Not_Found'));
+        $view->render();
+    }
+
+    function AccessDeniedPage()
+    {
+        $view = new Main_View(array('cont_view' => 'Access_Denied'));
         $view->render();
     }
 

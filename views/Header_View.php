@@ -10,10 +10,10 @@ class Header_View extends view
 {
     public function __construct()
     {
-        if (isset($_SESSION['uid']))
+        global $logged_user;
+
+        if (is_object($logged_user))
         {
-            $logged_user = new User_Model();
-            $logged_user = $logged_user->get_user_by_id($_SESSION['uid']);
             if (strcmp($logged_user->get_role(), 'admin') !== 0)
             {
                 $this->template = '<nav class="navbar navbar-inverse">

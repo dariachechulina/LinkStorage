@@ -13,16 +13,7 @@ class Users_View extends view
     public function __construct(array $params)
     {
         $this->parent_args = $params;
-        $role = '';
-        if (isset($_SESSION['uid']))
-        {
-            $logged_user = new User_Model();
-            $logged_user = $logged_user->get_user_by_id($_SESSION['uid']);
-            $role = $logged_user->get_role();
-        }
 
-        if(strcmp($role, 'admin') == 0)
-        {
             $this->template = '%s';
             $users = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['all_users'];
             $table_begin = '<div class="container">
@@ -87,15 +78,5 @@ class Users_View extends view
 </div>';
             $str_arg = $table_begin . $table_rows . $table_end;
             $this->args = array($str_arg);
-            //var_dump($this->args);
-        }
-
-
-        else
-        {
-            $this->template = '%s';
-            $this->args = array(new Access_Denied_View());
-        }
-
     }
 }

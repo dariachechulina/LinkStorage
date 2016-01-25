@@ -105,7 +105,7 @@ class Link_Model extends model
         $query->execute(array($lid));
         $result_link = $query->fetchObject('Link_Model');
 
-        return $result_link;
+        $this->copy($result_link);
     }
 
     public function get_all_links()
@@ -113,7 +113,7 @@ class Link_Model extends model
         if (isset($_SESSION['uid']))
         {
             $logged_user = new User_Model();
-            $logged_user = $logged_user->get_user_by_id($_SESSION['uid']);
+            $logged_user->get_user_by_id($_SESSION['uid']);
             if (strcmp($logged_user->get_role(), 'user') !== 0)
             {
                 global $conn;
@@ -208,6 +208,33 @@ class Link_Model extends model
         }
 
         return $links;
+    }
+
+
+    public function is_mine($id)
+    {
+        global $logged_user;
+        $this->get_link_by_id($id);
+
+        if ($this->get_uid() == $logged_user->get_uid())
+        {
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
+    }
+
+    public function copy(Link_Model $link)
+    {
+        $this->title = $link->get_title();
+        $this->link = $link->get_link();
+        $this->description = $link->get_description();
+        $this->uid = $link->get_uid();
+        $this->lid = $link->get_lid();
+        $this->privacy_status = $link->get_privacy_status();
     }
 
 }

@@ -15,26 +15,8 @@ class Edit_User_View extends view
         $this->parent_args = $params;
         $edit_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['edit_data'];
         global $logged_user;
-        if (!is_object($logged_user))
-        {
-            $this->template = '%s';
-            $this->args = array(new Access_Denied_View());
-            return;
-        }
 
         $role = $logged_user->get_role();
-
-        if (!is_object($edit_data) && strcmp($role, 'admin') == 0) {
-            $this->template = '%s';
-            $this->args = array(new Not_Found_View());
-            return;
-        }
-
-        if (!is_object($edit_data) && strcmp($role, 'admin') !== 0) {
-            $this->template = '%s';
-            $this->args = array(new Access_Denied_View());
-            return;
-        }
 
         if (is_object($logged_user)) {
 
@@ -172,11 +154,6 @@ class Edit_User_View extends view
 
     </form>
 </div>';
-            }
-
-            if (strcmp($role, 'admin') !== 0 && $edit_data->get_uid() !== $logged_user->get_uid()) {
-                $this->template = '%s';
-                $this->args = array(new Access_Denied_View());
             }
         }
     }

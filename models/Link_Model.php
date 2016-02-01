@@ -105,7 +105,13 @@ class Link_Model extends model
         $query->execute(array($lid));
         $result_link = $query->fetchObject('Link_Model');
 
-        $this->copy($result_link);
+        if (is_object($result_link))
+        {
+            $this->copy($result_link);
+            return true;
+        }
+
+        return false;
     }
 
     public function get_all_links()
@@ -214,16 +220,21 @@ class Link_Model extends model
     public function is_mine($id)
     {
         global $logged_user;
-        $this->get_link_by_id($id);
 
-        if ($this->get_uid() == $logged_user->get_uid())
+        $is_obj = $this->get_link_by_id($id);
+        if (!$is_obj)
         {
-            return true;
+            return 0;
         }
 
-        else
+        if ($is_obj && $this->get_uid() == $logged_user->get_uid())
         {
-            return false;
+            return 1;
+        }
+
+        if ($is_obj && $this->get_uid() !== $logged_user->get_uid())
+        {
+            return 2;
         }
     }
 

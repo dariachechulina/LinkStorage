@@ -33,12 +33,17 @@ class User_Controller extends Controller
             $log = $this->model->login();
 
             global $logged_user;
-            var_dump($logged_user);
 
             if (isset(User_Model::$error_pull['login_err'])) {
                 //print User_Model::$error_pull['login_err'];
                 $params = array('login' => $_POST['login'], 'pass' => $_POST['pass']);
                 $this->view = new Main_View(array('cont_view' => 'Login', 'log_data' => $params));
+                $this->view->render();
+            }
+
+            if (isset(User_Model::$error_pull['activation_err']))
+            {
+                $this->view = new Main_View(array('cont_view' => 'Login', 'activation' => 'false'));
                 $this->view->render();
             }
 

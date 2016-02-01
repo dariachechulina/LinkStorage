@@ -9,8 +9,17 @@ class Activation_Model
 
     public function send($uid_, $email_)
     {
-        $this->uid = $uid_;
         global $conn;
+        $query = $conn->prepare("SELECT * FROM tmplinks WHERE uid = ?");
+        $query->execute(array($uid_));
+        $result = $query->fetchAll();
+        if (count($result) !== 0)
+        {
+            return;
+        }
+
+        $this->uid = $uid_;
+
         $query = $conn->prepare("SELECT login FROM userdb WHERE email = ?");
         $query->execute(array($email_));
         $result = $query->fetchAll();
@@ -21,7 +30,7 @@ class Activation_Model
         $mail->addAddress($email_, $to);
 
         $base_url='testtask/';
-        $cur_exptime = date("y.m.d", time() - 2*(24*60*60));
+        $cur_exptime = date("y.m.d", time() + 2*(24*60*60));
         $activation=md5($email_.time());
         $this->hash = $activation;
         $this->exp_time = $cur_exptime;

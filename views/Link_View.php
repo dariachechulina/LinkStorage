@@ -16,20 +16,45 @@ class Link_View extends view
 
         $show_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['link'];
 
+
+
         $privacy = '';
         if (strcmp($show_data->get_privacy_status(), 'private') == 0)
         {
             $privacy = 'checked=""';
         }
 
-        $this->template = '<div class="container">
+        global $logged_user;
+        if (!is_object($logged_user) && strcmp($show_data->get_privacy_status(), 'public') == 0)
+        {
+
+            $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
         <h2 class="form-signin-heading" align="center"> </h2> <br>
-        <input type=text class="input-block-level" disabled="true" name="title" value="'. $show_data->get_title() .'"> <br> <br>
-        <input type=text class="input-block-level" disabled="true" name="link" value="'. $show_data->get_link() .'"> <br> <br>
+        <input type=text class="input-block-level" readonly name="title" value="'. $show_data->get_title() .'"> <br> <br>
+        <input type=text class="input-block-level" readonly name="link" onclick="location.href = \'http://'.$show_data->get_link().'\';" value="'. $show_data->get_link() .'"> <br> <br>
         <div class="form-group">
-  <textarea class="form-control" rows="5" id="comment" name="description" disabled="true">'. $show_data->get_description() .'</textarea>
+  <textarea class="form-control" rows="5" id="comment" name="description" readonly>'. $show_data->get_description() .'</textarea>
+</div>
+        <div class="checkbox">
+      <p align="center"><label><input type="checkbox" name="check" disabled="true" '. $privacy.'> &nbsp; Private link</label></p>
+    </div>
+    </form>
+
+</div>';
+        }
+
+        if (is_object($logged_user))
+        {
+            $this->template = '<div class="container">
+
+    <form class="form-signin" method="post" action="#">
+        <h2 class="form-signin-heading" align="center"> </h2> <br>
+        <input type=text class="input-block-level" readonly name="title" value="'. $show_data->get_title() .'"> <br> <br>
+        <input type=text class="input-block-level" readonly name="link" onclick="location.href = \'http://'.$show_data->get_link().'\';" value="'. $show_data->get_link() .'"> <br> <br>
+        <div class="form-group">
+  <textarea class="form-control" rows="5" id="comment" name="description" readonly>'. $show_data->get_description() .'</textarea>
 </div>
         <div class="checkbox">
       <p align="center"><label><input type="checkbox" name="check" disabled="true" '. $privacy.'> &nbsp; Private link</label></p>
@@ -58,5 +83,6 @@ class Link_View extends view
     </form>
 
 </div>';
+        }
     }
 }

@@ -28,6 +28,9 @@ else
     $logged_user = 0;
 }
 
+global $links_on_page;
+$links_on_page = 5;
+
 Route::start();
 
 

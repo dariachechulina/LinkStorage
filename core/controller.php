@@ -22,8 +22,16 @@ class Controller
         $cur_user = $logged_user;
         if (!is_object($cur_user))
         {
-            $cur_user = new User_Model();
             $role = 'anonim';
+            if (!is_null($id))
+            {
+                $action = $action . '_public';
+            }
+
+            if (!$this->is_action_valid($action))
+            {
+                return 'access_denied';
+            }
         }
         else
         {
@@ -35,15 +43,41 @@ class Controller
             $model_name = $this->get_resource_model();
             $cur_model = new $model_name();
 
-            if ($cur_model->is_mine($id))
+            $result_status = $cur_model->is_mine($id);
+
+            $flag = false;
+
+            switch ($result_status)
             {
-                $action = $action . '_own';
+                case 1 :
+                    $action = $action . '_own';
+                    break;
+
+                case 2:
+                    $action = $action . '_any';
+                    break;
+
+                case 0:
+                    $flag = true;
+                    break;
             }
-            else
+
+            if ($flag && strcmp($role, 'admin') == 0 && strcmp($model_name, 'User_Model') == 0)
             {
-                $action = $action . '_any';
+                return '404';
+            }
+
+            if ($flag && strcmp($role, 'user') !== 0 && strcmp($model_name, 'Link_Model') == 0)
+            {
+                return '404';
+            }
+
+            if ($flag)
+            {
+                return 'access_denied';
             }
         }
+
 
         if (!$this->is_action_valid($action))
         {

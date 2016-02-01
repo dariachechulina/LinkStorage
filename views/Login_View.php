@@ -15,16 +15,25 @@ class Login_View extends view
         $this->parent_args = $params;
         $log_data = array();
 
+
         if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data']))
         {
             $log_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data'];
         }
         if (count($log_data) == 0)
         {
+            if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['activation']))
+            {
+
+                $this->template = '<h2> You profile is not active.</h2> <h2> Please, check your mailbox! </h2>';
+                header("refresh:5; url=/");
+                return;
+            }
+
             $this->template = '<div class="container">
 
      <form class="form-signin" method="post" action="/User/login">
-        <h3 class="form-signin-heading" align="center"> &nbsp </h3>
+        <h3 class="form-signin-heading" align="center"> &nbsp; </h3>
         <br>
         <input type="text" class="input-block-level" name="login" placeholder="Login">
         <input type="password" class="input-block-level" name="pass" placeholder="Password">
@@ -39,8 +48,12 @@ class Login_View extends view
 
         else
         {
-            if (strcmp($log_data['login'], '') !== 0)
-            $this->template = '<div class="container">
+
+
+
+
+                if (strcmp($log_data['login'], '') !== 0)
+                    $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/login">
         <h3 class="form-signin-heading"> Error: ' . User_Model::$error_pull['login_err'] . '</h3>
@@ -55,9 +68,9 @@ class Login_View extends view
 
 </div>';
 
-            else
-            {
-                $this->template = '<div class="container">
+                else
+                {
+                    $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/login">
         <h3 class="form-signin-heading"> Error: ' . User_Model::$error_pull['login_err'] . '</h3>
@@ -71,7 +84,8 @@ class Login_View extends view
     </form>
 
 </div>';
-            }
+                }
+
         }
     }
 }

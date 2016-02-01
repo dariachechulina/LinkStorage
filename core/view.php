@@ -32,6 +32,7 @@ class view
             $this->prepare_args();
         }
 
+
         print call_user_func_array('sprintf', array_merge(array($this->template), $this->args));
     }
 

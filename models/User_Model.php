@@ -195,7 +195,7 @@ class User_Model extends model
 
         if (!$this->is_active())
         {
-            echo "Your account isn't active. Please, check your mailbox";
+            self::$error_pull['activation_err'] = "account isn't active";
             $this->send_email();
             return false;
         }
@@ -262,7 +262,22 @@ class User_Model extends model
         $query->execute(array($uid));
         $result_user = $query->fetchObject('User_Model');
 
-        $this->copy($result_user);
+        $this->copy_($result_user);
+    }
+
+    public function find_user_by_id($uid)
+    {
+        global $conn;
+        $query = $conn->prepare("SELECT * FROM userdb WHERE uid = ?");
+        $query->execute(array($uid));
+        $result_user = $query->fetchObject('User_Model');
+
+        if (!is_object($result_user))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     public function get_all_users()
@@ -293,17 +308,25 @@ class User_Model extends model
 
     public function is_mine($id)
     {
-        if ($this->get_uid() == $id)
+        $is_valid_id = $this->find_user_by_id($id);
+        global $logged_user;
+
+        if (!$is_valid_id)
         {
-            return true;
+            return 0;
+        }
+
+        if ($logged_user->get_uid() == $id)
+        {
+            return 1;
         }
         else
         {
-            return false;
+            return 2;
         }
     }
 
-    public function copy(User_Model $user)
+    public function copy_(User_Model $user)
     {
         $this->login = $user->get_login();
         $this->pass = $user->get_password();

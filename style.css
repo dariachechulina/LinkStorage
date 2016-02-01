@@ -28,10 +28,12 @@ body {
 .form-signin input[type="email"]{
     font-size: 16px;
     height: auto;
+    width: auto;
     margin-bottom: 20px;
     padding: 10px 20px;
     text-align: center;
     border-radius: 5px;
+    word-break: break-all;
 
 }
 
@@ -48,6 +50,15 @@ body {
     padding: 10px 20px;
 
 }
+
+table {
+    table-layout: fixed;
+    width:100%
+}
+td {
+    word-wrap:break-word;
+}
+
 
 h1 {
     color: blue;

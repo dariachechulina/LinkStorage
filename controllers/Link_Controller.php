@@ -84,11 +84,17 @@ class Link_Controller extends Controller
 
     function action_show($lid)
     {
-        $this->model->get_link_by_id($lid);
+        $is_obj = $this->model->get_link_by_id($lid);
 
-        //if (isset($_POST['show']))
+        if ($is_obj)
         {
             $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model));
+            $this->view->render();
+        }
+
+        else
+        {
+            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
             $this->view->render();
         }
     }

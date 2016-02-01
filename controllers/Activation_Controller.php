@@ -4,6 +4,8 @@
 class Activation_Controller extends Controller
 {
 
+    private $resource_model = 'Activation_Model';
+
     function __construct()
     {
         $this->model = new Activation_Model();
@@ -24,5 +26,10 @@ class Activation_Controller extends Controller
             $this->view = new Main_View(array('cont_view' => 'Not_Found'));
             $this->view->render();
         }
+    }
+
+    public function get_resource_model()
+    {
+        return $this->resource_model;
     }
 }

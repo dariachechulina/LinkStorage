@@ -30,7 +30,7 @@ class Header_View extends view
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a href="/User/edit/' . $_SESSION['uid'] . '"><span class="glyphicon glyphicon-pencil"></span> &nbsp; Edit profile</a></li>
-          <li><a href="/User/logout"><span class="glyphicon glyphicon-log-out"></span> &nbsp; Logout</a></li>
+          <li id="logout" onclick="logout()"><a href="/"><span class="glyphicon glyphicon-log-out"></span> &nbsp; Logout</a></li>
         </ul>
       </li>
     </ul>
@@ -55,12 +55,15 @@ class Header_View extends view
         <span class="caret"></span></a>
         <ul class="dropdown-menu">
           <li><a href="/User/edit/' . $_SESSION['uid'] . '"><span class="glyphicon glyphicon-pencil"></span> &nbsp; Edit profile</a></li>
-          <li><a href="/User/logout"><span class="glyphicon glyphicon-log-out"></span> &nbsp; Logout</a></li>
+          <li id="logout" onclick="logout()"><a href="/"><span class="glyphicon glyphicon-log-out"></span> &nbsp; Logout</a></li>
+
         </ul>
       </li>
     </ul>
   </div>
-</nav>';
+</nav>
+
+';
             }
         }
         else
@@ -81,3 +84,4 @@ class Header_View extends view
     }
 
 }
+

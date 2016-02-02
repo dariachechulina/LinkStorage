@@ -24,9 +24,7 @@ class Link_View extends view
             $privacy = 'checked=""';
         }
 
-        global $logged_user;
-        if (!is_object($logged_user) && strcmp($show_data->get_privacy_status(), 'public') == 0)
-        {
+
 
             $this->template = '<div class="container">
 
@@ -43,23 +41,11 @@ class Link_View extends view
     </form>
 
 </div>';
-        }
 
-        if (is_object($logged_user))
+
+        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions']))
         {
-            $this->template = '<div class="container">
-
-    <form class="form-signin" method="post" action="#">
-        <h2 class="form-signin-heading" align="center"> </h2> <br>
-        <input type=text class="input-block-level" readonly name="title" value="'. $show_data->get_title() .'"> <br> <br>
-        <input type=text class="input-block-level" readonly name="link" onclick="location.href = \'http://'.$show_data->get_link().'\';" value="'. $show_data->get_link() .'"> <br> <br>
-        <div class="form-group">
-  <textarea class="form-control" rows="5" id="comment" name="description" readonly>'. $show_data->get_description() .'</textarea>
-</div>
-        <div class="checkbox">
-      <p align="center"><label><input type="checkbox" name="check" disabled="true" '. $privacy.'> &nbsp; Private link</label></p>
-    </div>
-
+            $this->template = $this->template.'
         <p align="center"> <button class="btn btn-large btn-warning" type="button" onclick="location.href = \'/Link/edit/'.$show_data->get_lid().'\';" name="edit" ><span class="glyphicon glyphicon-pencil"></span> &nbsp;Edit</button> &nbsp;
         <button type="button" class="btn btn-large btn-danger" data-toggle="modal" data-target="#myModal" name="delete">Delete</button> </p><div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog modal-sm">
@@ -80,9 +66,11 @@ class Link_View extends view
 
     </div>
   </div>
-    </form>
+    ';
+        }
+
+        $this->template = $this->template . '</form>
 
 </div>';
-        }
     }
 }

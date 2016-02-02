@@ -84,11 +84,22 @@ class Link_Controller extends Controller
 
     function action_show($lid)
     {
+        global $logged_user;
         $is_obj = $this->model->get_link_by_id($lid);
 
-        if ($is_obj)
+        if (!is_object($logged_user) && $is_obj && strcmp($this->model->get_privacy_status(), 'public') == 0 ||
+             is_object($logged_user) && $is_obj && strcmp($this->model->get_privacy_status(), 'public') == 0
+                                     && $logged_user->get_uid() !== $this->model->get_uid()
+                                     && strcmp($logged_user->get_role(), 'user') == 0)
         {
             $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model));
+            $this->view->render();
+        }
+
+        else if (is_object($logged_user) && $is_obj && $logged_user->get_uid() == $this->model->get_uid() ||
+                 is_object($logged_user) && $is_obj && strcmp($logged_user->get_role(), 'user') !== 0)
+        {
+            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model, 'actions' => true));
             $this->view->render();
         }
 

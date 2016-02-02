@@ -58,10 +58,6 @@ class Activation_Model
         {
             echo "Mailer Error: " . $mail->ErrorInfo;
         }
-        else
-        {
-            #echo "Message sent!";
-        }
     }
 
     public function activate_user($hash_)
@@ -87,12 +83,12 @@ class Activation_Model
         {
             $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
-            self::$error_pull['msg'] = 'Your profile is successfully activated';
+            self::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
             return;
         }
         else
         {
-            self::$error_pull['msg'] = 'Your profile has been already activated';
+            self::$error_pull['msg'] = 'This activation link has already activated the corresponding profile';
             return;
         }
 

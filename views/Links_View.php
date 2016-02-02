@@ -35,6 +35,10 @@ class Links_View extends view
                 $table_rows = '';
                 $table_rows = '';
                 global $links_on_page;
+                if ($links_on_page == 0)
+                {
+                    $links_on_page = count($links);
+                }
                 $pages = ceil(count($links) / $links_on_page);
 
 
@@ -103,6 +107,10 @@ class Links_View extends view
     <tbody>';
                 $table_rows = '';
                 global $links_on_page;
+                if ($links_on_page == 0)
+                {
+                    $links_on_page = count($links);
+                }
                 $pages = ceil(count($links) / $links_on_page);
 
 
@@ -180,6 +188,10 @@ class Links_View extends view
             $table_rows = '';
 
             global $links_on_page;
+            if ($links_on_page == 0)
+            {
+                $links_on_page = count($links);
+            }
             $pages = ceil(count($links) / $links_on_page);
 
             if(isset($_GET['page']) && $_GET['page'] <= $pages && $_GET['page'] > 0)
@@ -248,8 +260,8 @@ class Links_View extends view
                         $pager = $pager . '<li><a href="?page=' . $prev_page . '">&laquo;</a></li>';
                     }
 
-                    for ($i = 1; $i < $pages + 1; $i++) {
-
+                    for ($i = 1; $i < $pages + 1; $i++)
+                    {
                         $pager = $pager . '<li><a href="?page=' . $i . '">' . $i . '</a></li>';
                     }
 

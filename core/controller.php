@@ -25,7 +25,7 @@ class Controller
             $role = 'anonim';
             if (!is_null($id))
             {
-                $action = $action . '_public';
+                $action = $action . '_any';
             }
 
             if (!$this->is_action_valid($action))

@@ -218,7 +218,10 @@ class User_Model extends model
 
     public function logout()
     {
+        $_SESSION = array();
+        unset($_COOKIE[session_name()]);
         session_destroy();
+
         return true;
     }
 

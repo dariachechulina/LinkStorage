@@ -147,10 +147,19 @@ class User_Controller extends Controller
 
     function action_logout()
     {
-        $this->view = new Main_View(array('cont_view' => 'Logout'));
-        $this->view->render();
-        $this->model->logout();
-        header("Location: /");
+        if ($_SERVER['REQUEST_METHOD'] == 'GET')
+        {
+            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
+            $this->view->render();
+        }
+       else
+        {
+            //$this->view = new Main_View(array('cont_view' => 'Logout'));
+           // $this->view->render();
+           $this->model->logout();
+           header("Location: /");
+        }
+
     }
 
     function action_delete()

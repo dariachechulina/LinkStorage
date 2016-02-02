@@ -8,8 +8,7 @@
 $login = "root";
 $passwd = "qwerty123";
 
-$conn = new PDO("mysql:host=localhost;dbname=testdb", $login, $passwd);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+global $conn;
 
 
 

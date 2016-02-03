@@ -38,9 +38,7 @@ class Link_View extends view
         <div class="checkbox">
       <p align="center"><label><input type="checkbox" name="check" disabled="true" '. $privacy.'> &nbsp; Private link</label></p>
     </div>
-    </form>
-
-</div>';
+    ';
 
 
         if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions']))
@@ -60,7 +58,7 @@ class Link_View extends view
           <p>Are you sure you want to delete link? This action will be undone </p>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-block" data-dismiss="modal" onclick="location.href = \'/Link/edit/'.$show_data->get_lid().'\';" name="confirm_delete" >Delete</button>
+          <button type="submit" class="btn btn-danger btn-block" onclick="delete_link('.$show_data->get_lid().')" data-dismiss="modal" name="delete" >Delete</button>
         </div>
       </div>
 

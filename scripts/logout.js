@@ -8,6 +8,7 @@ function logout(){
         type: "POST",
         url: "http://testtask/User/logout",
         success: function(data){
+            location.reload()
         }
     });
 }

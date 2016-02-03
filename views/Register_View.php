@@ -24,7 +24,7 @@ class Register_View extends view
             $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/register">
-        <h3 class="form-signin-heading" align="center"> </h3> <br>
+        <h3 class="form-signin-heading" align="center"> Sign up </h3> <br>
         <input type=text class="input-block-level" name="name" placeholder="Name"> <br> <br>
         <input type=text class="input-block-level" name="surname" placeholder="Surname"> <br> <br>
         <input type=email class="input-block-level" name="email" placeholder="* E-mail" > <br> <br>

@@ -13,7 +13,6 @@ class Link_Controller extends Controller
     function __construct()
     {
         $this->model = new Link_Model();
-        //->view = new View();
     }
 
     function action_add()
@@ -125,5 +124,19 @@ class Link_Controller extends Controller
     public function get_resource_model()
     {
         return $this->resource_model;
+    }
+
+    public function action_delete()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET')
+        {
+            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
+            $this->view->render();
+        }
+        if (isset($_POST['lid']))
+        {
+            $lid = $_POST['lid'];
+            $this->model->delete_link($lid);
+        }
     }
 }

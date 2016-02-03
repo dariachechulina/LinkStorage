@@ -59,10 +59,10 @@ class Users_View extends view
           <h3 class="modal-title">Warning!</h3>
         </div>
         <div class="modal-body">
-          <p>Are you sure you want to delete user <b>' . $users[$i]->get_login(). '</b>? This action will be undone. </p>
+          <p id="login">Are you sure you want to delete user <b>' . $users[$i]->get_login(). '</b>? This action will be undone. </p>
         </div>
         <div class="modal-footer">
-          <p align=center> <button type="submit" class="btn btn-success " data-dismiss="modal"  name="delete" >Delete</button>
+          <p align=center> <button type="submit" class="btn btn-success" onclick="delete_user('.$users[$i]->get_uid().')" data-dismiss="modal"  name="delete" >Delete</button>
 
         <button type="submit" class="btn btn-danger " data-dismiss="modal" onclick="location.href = \'/User/show_users\';" name="cancel_' . $i.'" >Cancel</button></p>
         </div>

@@ -13,7 +13,8 @@ class Controller
 
     function __construct()
     {
-        $this->view = new View();
+        $this->view = new view();
+        $this->model = new model();
     }
 
     function action_allowed_status($action, $id = NULL)
@@ -28,7 +29,7 @@ class Controller
                 $action = $action . '_any';
             }
 
-            if (!$this->is_action_valid($action))
+            if (!$this->model->is_action_valid($action))
             {
                 return 'access_denied';
             }
@@ -79,17 +80,12 @@ class Controller
         }
 
 
-        if (!$this->is_action_valid($action))
+        if (!$this->model->is_action_valid($action))
         {
             return '404';
         }
 
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM permission WHERE role = '$role' AND action = '$action'");
-        $query->execute();
-        $result = $query->fetchAll();
-
-        if (!count($result))
+        if (!$this->model->is_action_allowed($role, $action))
         {
             return 'access_denied';
         }
@@ -97,20 +93,6 @@ class Controller
         return 'ok';
     }
 
-    function is_action_valid($action)
-    {
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM permission WHERE action = '$action'");
-        $query->execute();
-        $result = $query->fetchAll();
-
-        if (!count($result))
-        {
-            return false;
-        }
-
-        return true;
-    }
 
     public function get_resource_model()
     {

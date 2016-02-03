@@ -86,18 +86,16 @@ class User_Model extends model
 
     public function save()
     {
-        global $conn;
-
-        if ($this->uid == 0)
+         if ($this->uid == 0)
         {
             $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
-            $conn->exec($query);
-            $this->uid = $conn->lastInsertId();
+            $this->connection->exec($query);
+            $this->uid = $this->connection->lastInsertId();
         }
         else
         {
             $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$this->uid'";
-            $conn->exec($query);
+            $this->connection->exec($query);
         }
     }
 
@@ -108,8 +106,8 @@ class User_Model extends model
             self::$error_pull['login_err'] = "Invalid login";
             return false;
         }
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
+
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
         $result = $query->fetchAll();
         $length = count($result);
@@ -138,7 +136,6 @@ class User_Model extends model
     {
         if (strcmp($this->login, '') == 0 || strcmp($this->pass, '') == 0 || strcmp($this->email, '') == 0)
         {
-            //echo "Please, fill all required fields";
             self::$error_pull['register_err'] = 'Please, fill all required fields';
             return false;
         }
@@ -146,7 +143,6 @@ class User_Model extends model
         {
             self::$error_pull['register_err'] = "Password don't match. Try again";
             return false;
-            #return "Password don't match. Try again";
         }
 
         $regex = '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
@@ -154,11 +150,9 @@ class User_Model extends model
         {
             self::$error_pull['register_err'] = "Invalid email";
             return false;
-            #return "Invalid email";
         }
 
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM userdb WHERE login = ?");
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
         $result = $query->fetchAll();
         $length = count($result);
@@ -168,7 +162,7 @@ class User_Model extends model
             return false;
             #return "User with such login exists. Try again";
         }
-        $query = $conn->prepare("SELECT * FROM userdb WHERE email = ?");
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE email = ?");
         $query->execute(array($this->email));
         $result = $query->fetchAll();
         $length = count($result);
@@ -176,12 +170,9 @@ class User_Model extends model
         {
             self::$error_pull['register_err'] = "User with such email exists. Try again";
             return false;
-            #return "User with such email exists. Try again";
         }
 
-        echo "SUCCESS_VALIDATION";
         return true;
-        #return 'success';
     }
 
     public function login()
@@ -228,8 +219,8 @@ class User_Model extends model
     public function send_email()
     {
         $tmp_link = new Activation_Model();
-        global $conn;
-        $query = $conn->prepare("SELECT uid FROM userdb WHERE login = ?");
+
+        $query = $this->connection->prepare("SELECT uid FROM userdb WHERE login = ?");
         $query->execute(array($this->login));
         $result = $query->fetchAll();
         if (!count($result))
@@ -241,37 +232,24 @@ class User_Model extends model
         return true;
     }
 
-    public function delete_user($login_)
+    public function delete_user($uid)
     {
-        if ($this->role != 'admin')
-        {
-            echo "You have no permission for this action";
-            return false;
-        }
-
-        global $conn;
-        $query = $conn->prepare("DELETE FROM userdb WHERE login = ?");
-        if (!$query->execute(array($login_)))
-        {
-            return false;
-        }
-        return true;
+        $query = $this->connection->prepare("DELETE FROM userdb WHERE uid = $uid");
+        $query->execute();
     }
 
     public function get_user_by_id($uid)
     {
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM userdb WHERE uid = ?");
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE uid = ?");
         $query->execute(array($uid));
         $result_user = $query->fetchObject('User_Model');
 
-        $this->copy_($result_user);
+        $this->copy($result_user);
     }
 
     public function find_user_by_id($uid)
     {
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM userdb WHERE uid = ?");
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE uid = ?");
         $query->execute(array($uid));
         $result_user = $query->fetchObject('User_Model');
 
@@ -285,12 +263,16 @@ class User_Model extends model
 
     public function get_all_users()
     {
-        global $conn;
-        $res = $conn->query("SELECT * FROM userdb", PDO::FETCH_LAZY);
-        $users = array(count($res));
+        $res = $this->connection->query("SELECT * FROM userdb", PDO::FETCH_LAZY);
+        $users = array();
+        global $logged_user;
         $i = 0;
         foreach ($res as $row)
         {
+            if ($row['uid'] == $logged_user->uid)
+            {
+                continue;
+            }
             $cur_user = new User_Model();
             $cur_user->set_login($row['login']);
             $cur_user->set_password($row['pass']);
@@ -329,7 +311,7 @@ class User_Model extends model
         }
     }
 
-    public function copy_(User_Model $user)
+    public function copy(User_Model $user)
     {
         $this->login = $user->get_login();
         $this->pass = $user->get_password();
@@ -341,7 +323,13 @@ class User_Model extends model
         $this->surname = $user->get_surname();
     }
 
-
+    public function __set($string, $value)
+    {
+        if (strcmp($string, 'pass') == 0)
+        {
+            $value = md5($value);
+        }
+    }
 
 }
 

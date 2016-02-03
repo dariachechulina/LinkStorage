@@ -24,16 +24,17 @@ class Login_View extends view
         {
             if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['activation']))
             {
-
-                $this->template = '<h2> You profile is not active.</h2> <h2> Please, check your mailbox! </h2>';
-                header("refresh:5; url=/");
+                $this->template = '<h2> You profile is not active.</h2> <h2> Please, check your mailbox! </h2> <br> <br>
+                <h3>I lost my link, send again <br> <br>
+                <input type="text" class="input-block-level" id="email" placeholder="Enter your email">
+                <button onclick="resend_email()">Send</button> </h3>';
                 return;
             }
 
             $this->template = '<div class="container">
 
      <form class="form-signin" method="post" action="/User/login">
-        <h3 class="form-signin-heading" align="center"> &nbsp; </h3>
+        <h3 class="form-signin-heading" align="center"> Sign in </h3>
         <br>
         <input type="text" class="input-block-level" name="login" placeholder="Login">
         <input type="password" class="input-block-level" name="pass" placeholder="Password">
@@ -48,34 +49,17 @@ class Login_View extends view
 
         else
         {
-
-
-
-
+                $login = '';
                 if (strcmp($log_data['login'], '') !== 0)
-                    $this->template = '<div class="container">
-
-    <form class="form-signin" method="post" action="/User/login">
-        <h3 class="form-signin-heading"> Error: ' . User_Model::$error_pull['login_err'] . '</h3>
-        <br>
-        <input type="text" class="input-block-level" name="login" value = ' . $log_data['login'] .'>
-        <input type="password" class="text-error"  name="pass" placeholder="Password">
-
-        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="log"><span class="glyphicon glyphicon-log-in"></span> &nbsp; Login</button></p>
-        <br>
-        <p align="center"> Not registered now? <a href="/User/register"> Sign up</a> </p>
-    </form>
-
-</div>';
-
-                else
                 {
+                    $login = $log_data['login'];
+                }
                     $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/login">
         <h3 class="form-signin-heading"> Error: ' . User_Model::$error_pull['login_err'] . '</h3>
         <br>
-        <input type="text" class="input-block-level" name="login" placeholder="Login">
+        <input type="text" class="input-block-level" name="login" placeholder="Login" value = ' . $login .'>
         <input type="password" class="text-error"  name="pass" placeholder="Password">
 
         <p align="center"><button class="btn btn-large btn-primary" type="submit" name="log"><span class="glyphicon glyphicon-log-in"></span> &nbsp; Login</button></p>
@@ -84,7 +68,6 @@ class Login_View extends view
     </form>
 
 </div>';
-                }
 
         }
     }

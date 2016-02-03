@@ -1,26 +1,25 @@
 <?php
 
 
-class Activation_Model
+class Activation_Model extends model
 {
     private $uid, $hash, $exp_time;
 
     public static $error_pull = array();
 
-    public function send($uid_, $email_)
+    public function send($uid_, $email_, $flag = null)
     {
-        global $conn;
-        $query = $conn->prepare("SELECT * FROM tmplinks WHERE uid = ?");
+        $query = $this->connection->prepare("SELECT * FROM tmplinks WHERE uid = ?");
         $query->execute(array($uid_));
         $result = $query->fetchAll();
-        if (count($result) !== 0)
+        if (count($result) !== 0 && is_null($flag))
         {
             return;
         }
 
         $this->uid = $uid_;
 
-        $query = $conn->prepare("SELECT login FROM userdb WHERE email = ?");
+        $query = $this->connection->prepare("SELECT login FROM userdb WHERE email = ?");
         $query->execute(array($email_));
         $result = $query->fetchAll();
         $to = $result[0]['login'];
@@ -35,18 +34,18 @@ class Activation_Model
         $this->hash = $activation;
         $this->exp_time = $cur_exptime;
 
-        $query = $conn->prepare("SELECT * FROM tmplinks WHERE uid = ?");
+        $query = $this->connection->prepare("SELECT * FROM tmplinks WHERE uid = ?");
         $query->execute(array($uid_));
         $result = $query->fetchAll();
         if (count($result) == 0)
         {
             $query = "INSERT INTO tmplinks (uid, hash, exp_time) VALUES('$uid_', '$activation', '$cur_exptime')";
-            $conn->exec($query);
+            $this->connection->exec($query);
         }
 
         else
         {
-            $query = $conn->prepare("UPDATE tmplinks SET hash = '$this->hash', exp_time = '$this->exp_time' WHERE uid = ?");
+            $query = $this->connection->prepare("UPDATE tmplinks SET hash = '$this->hash', exp_time = '$this->exp_time' WHERE uid = ?");
             $query->execute(array($uid_));
         }
 
@@ -60,10 +59,21 @@ class Activation_Model
         }
     }
 
+    public function resend($email)
+    {
+        $query = $this->connection->prepare("SELECT * FROM userdb WHERE email = ?");
+        $query->execute(array($email));
+        $result = $query->fetchAll();
+
+        if (count($result) > 0)
+        {
+            $this->send($result[0]['uid'], $email, true);
+        }
+    }
+
     public function activate_user($hash_)
     {
-        global $conn;
-        $query = $conn->prepare("SELECT uid FROM tmplinks WHERE hash = '$hash_'");
+        $query = $this->connection->prepare("SELECT uid FROM tmplinks WHERE hash = '$hash_'");
         $query->execute();
         $result = $query->fetchAll();
         if (count($result) == 0)
@@ -73,7 +83,7 @@ class Activation_Model
         }
         $cur_uid = $result[0]["uid"];
 
-        $query = $conn->prepare("SELECT login, status FROM userdb WHERE uid = ?");
+        $query = $this->connection->prepare("SELECT login, status FROM userdb WHERE uid = ?");
         $query->execute(array($cur_uid));
         $result = $query->fetchAll();
         $cur_login = $result[0]['login'];
@@ -81,7 +91,7 @@ class Activation_Model
 
         if($cur_status == 0)
         {
-            $query = $conn->prepare("UPDATE userdb SET status='1' WHERE login=?");
+            $query = $this->connection->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
             self::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
             return;

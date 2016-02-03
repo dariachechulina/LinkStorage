@@ -32,4 +32,20 @@ class Activation_Controller extends Controller
     {
         return $this->resource_model;
     }
+
+    public function action_resend()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET')
+        {
+            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
+            $this->view->render();
+        }
+
+        if (isset($_POST['email']))
+        {
+            $email = $_POST['email'];
+            $this->model->resend($email);
+            header("Location: /");
+        }
+    }
 }

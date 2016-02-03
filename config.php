@@ -8,13 +8,6 @@
 
 require_once 'autoload.php';
 
-$login = "root";
-$passwd = "qwerty123";
-
-global $conn;
-$conn = new PDO("mysql:host=localhost;dbname=testdb", $login, $passwd);
-$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 
 spl_autoload_register("autoload");
 

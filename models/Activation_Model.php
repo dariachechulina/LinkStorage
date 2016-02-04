@@ -86,6 +86,12 @@ class Activation_Model extends model
         $query = $this->connection->prepare("SELECT login, status FROM userdb WHERE uid = ?");
         $query->execute(array($cur_uid));
         $result = $query->fetchAll();
+
+        if (count($result) == 0)
+        {
+            self::$error_pull['msg'] = 'Link does\'t exist';
+            return;
+        }
         $cur_login = $result[0]['login'];
         $cur_status = $result[0]['status'];
 

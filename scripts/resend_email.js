@@ -2,6 +2,11 @@
  * Created by dchechulina on 2/3/16.
  */
 
+$(document).ready(function()
+{
+    $("#resend").click(resend_email);
+});
+
 function resend_email()
 {
     var email = $('#email').val();
@@ -10,6 +15,7 @@ function resend_email()
         url: "http://testtask/Activation/resend",
         data: {email: email},
         success: function(data){
+            document.location.href="http://testtask/";
         }
     });
 }

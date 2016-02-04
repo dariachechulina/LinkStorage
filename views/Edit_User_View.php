@@ -24,14 +24,16 @@ class Edit_User_View extends view
 
             $edited_role = $edit_data->get_role();
 
+        $cur_message = (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['error'])) ? $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['error'] : 'Edit profile';
+
                 $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
-        <h2 class="form-signin-heading" align="center">Edit profile</h2> <br>
-        <input type="text" class="input-block-level" name="name" value=' . $edit_data->get_name() . ' placeholder="Name"> <br> <br>
-        <input type=text class="input-block-level" name="surname" value=' . $edit_data->get_surname() . ' placeholder="Surname"> <br> <br>
+        <h2 class="form-signin-heading" align="center">'.$cur_message.'</h2> <br>
+        <input type="text" class="input-block-level" name="name" placeholder="* Name" value=' . $edit_data->get_name() . ' > <br> <br>
+        <input type=text class="input-block-level" name="surname" placeholder="* Surname" value=' . $edit_data->get_surname() . ' > <br> <br>
 
-        <input type=text class="input-block-level" disabled="true" name="login" value=' . $edit_data->get_login() . ' placeholder="* Login" > <br> <br>';
+        <input type=text class="input-block-level" disabled="true" name="login" value=' . $edit_data->get_login() . ' placeholder="Login" > <br> <br>';
 
                 if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions'])) {
                     $this->template = $this->template . '
@@ -49,7 +51,7 @@ class Edit_User_View extends view
         if(isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']) && $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine'] == true
             || !isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']))
         {
-            $this->template = $this->template . '<input type="password" class="input-block-level" name="pass" placeholder="* Password" > <br> <br>';
+            $this->template = $this->template . '<input type="password" class="input-block-level" name="pass" placeholder="Password" > <br> <br>';
         }
 
         $this->template = $this->template . '<p align="center"> <button class="btn btn-large btn-primary" type="submit" name="edit"><span class="glyphicon glyphicon-floppy-save"></span> &nbsp;Save</button> &nbsp;

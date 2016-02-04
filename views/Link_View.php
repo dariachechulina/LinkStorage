@@ -58,7 +58,7 @@ class Link_View extends view
           <p>Are you sure you want to delete link? This action will be undone </p>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-danger btn-block" onclick="delete_link('.$show_data->get_lid().')" data-dismiss="modal" name="delete" >Delete</button>
+          <button type="submit" class="btn btn-danger btn-block delete-link-button" name="'.$show_data->get_lid().'" data-dismiss="modal" >Delete</button>
         </div>
       </div>
 

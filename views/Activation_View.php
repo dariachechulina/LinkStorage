@@ -19,11 +19,5 @@ class Activation_View extends view
         {
             $this->template = '<h2>'. $status['msg'].'</h2>';
         }
-
-        else
-        {
-            $this->template = '%s';
-            $this->args = array(new Not_Found_View());
-        }
     }
 }

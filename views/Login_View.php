@@ -13,21 +13,21 @@ class Login_View extends view
     public function __construct(array $params)
     {
         $this->parent_args = $params;
-        $log_data = array();
+        $login_data = array();
 
 
-        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data']))
+        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['login_data']))
         {
-            $log_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['log_data'];
+            $login_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['login_data'];
         }
-        if (count($log_data) == 0)
+        if (count($login_data) == 0)
         {
             if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['activation']))
             {
                 $this->template = '<h2> You profile is not active.</h2> <h2> Please, check your mailbox! </h2> <br> <br>
                 <h3>I lost my link, send again <br> <br>
                 <input type="text" class="input-block-level" id="email" placeholder="Enter your email">
-                <button onclick="resend_email()">Send</button> </h3>';
+                <button id="resend">Send</button> </h3>';
                 return;
             }
 
@@ -39,7 +39,7 @@ class Login_View extends view
         <input type="text" class="input-block-level" name="login" placeholder="Login">
         <input type="password" class="input-block-level" name="pass" placeholder="Password">
 
-        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="log"> <span class="glyphicon glyphicon-log-in"></span> &nbsp; Login </button></p>
+        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="login_button"> <span class="glyphicon glyphicon-log-in"></span> &nbsp; Login </button></p>
         <br>
         <p align="center"> Not registered now? <a href="/User/register"> Sign up</a> </p>
     </form>
@@ -50,9 +50,9 @@ class Login_View extends view
         else
         {
                 $login = '';
-                if (strcmp($log_data['login'], '') !== 0)
+                if (strcmp($login_data['login'], '') !== 0)
                 {
-                    $login = $log_data['login'];
+                    $login = $login_data['login'];
                 }
                     $this->template = '<div class="container">
 
@@ -62,7 +62,7 @@ class Login_View extends view
         <input type="text" class="input-block-level" name="login" placeholder="Login" value = ' . $login .'>
         <input type="password" class="text-error"  name="pass" placeholder="Password">
 
-        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="log"><span class="glyphicon glyphicon-log-in"></span> &nbsp; Login</button></p>
+        <p align="center"><button class="btn btn-large btn-primary" type="submit" name="login_button"><span class="glyphicon glyphicon-log-in"></span> &nbsp; Login</button></p>
         <br>
         <p align="center"> Not registered now? <a href="/User/register"> Sign up</a> </p>
     </form>

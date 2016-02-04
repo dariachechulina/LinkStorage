@@ -40,7 +40,7 @@ class Users_View extends view
                 {
                     $privacy = 'checked=""';
                 }
-                $table_rows = $table_rows . '<tr> <td>' . $users[$i]->get_login() .'</td>' .
+                $table_rows = $table_rows . '<tr> <td id="login">' . $users[$i]->get_login() .'</td>' .
                     '<td>' . $users[$i]->get_email() .
                     '<td>' . $users[$i]->get_role() .'</td>' .
                     '<td> <input align="center" type="checkbox" disabled name="check"'. $privacy.'></td>' .
@@ -53,16 +53,16 @@ class Users_View extends view
     <div class="modal-dialog modal-sm">
 
       <!-- Modal content-->
-      <div class="modal-content">
+      <div class="modal-content" id="myModalContent'.$i.'">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
           <h3 class="modal-title">Warning!</h3>
         </div>
-        <div class="modal-body">
-          <p id="login">Are you sure you want to delete user <b>' . $users[$i]->get_login(). '</b>? This action will be undone. </p>
+        <div class="modal-body" id="myModalBody'.$i.'">
+          <p id="loG'.$i.'">Are you sure you want to delete user <b>' . $users[$i]->get_login(). '</b>? This action will be undone. </p>
         </div>
-        <div class="modal-footer">
-          <p align=center> <button type="submit" class="btn btn-success" onclick="delete_user('.$users[$i]->get_uid().')" data-dismiss="modal"  name="delete" >Delete</button>
+        <div class="modal-footer" id="myModalFooter'.$i.'">
+          <p id="HA" align=center> <button type="submit" class="btn btn-success delete-user-button" data-dismiss="modal" id="delete_button" name="' . $users[$i]->get_uid().'" >Delete</button>
 
         <button type="submit" class="btn btn-danger " data-dismiss="modal" onclick="location.href = \'/User/show_users\';" name="cancel_' . $i.'" >Cancel</button></p>
         </div>

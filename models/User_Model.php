@@ -139,7 +139,7 @@ class User_Model extends model
             self::$error_pull['register_err'] = 'Please, fill all required fields';
             return false;
         }
-        if ($this->pass != $repass)
+        if ($this->pass != md5($repass))
         {
             self::$error_pull['register_err'] = "Password don't match. Try again";
             return false;
@@ -236,6 +236,9 @@ class User_Model extends model
     {
         $query = $this->connection->prepare("DELETE FROM userdb WHERE uid = $uid");
         $query->execute();
+
+        $query = $this->connection->prepare("DELETE FROM links WHERE uid = $uid");
+        $query->execute();
     }
 
     public function get_user_by_id($uid)
@@ -290,7 +293,6 @@ class User_Model extends model
         return $users;
     }
 
-
     public function is_mine($id)
     {
         $is_valid_id = $this->find_user_by_id($id);
@@ -323,12 +325,9 @@ class User_Model extends model
         $this->surname = $user->get_surname();
     }
 
-    public function __set($string, $value)
+    public function __set($pass, $value)
     {
-        if (strcmp($string, 'pass') == 0)
-        {
-            $value = md5($value);
-        }
+        $this->pass = md5($value);
     }
 
 }

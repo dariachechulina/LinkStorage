@@ -35,7 +35,8 @@ class Edit_User_View extends view
 
         <input type=text class="input-block-level" disabled="true" name="login" value=' . $edit_data->get_login() . ' placeholder="Login" > <br> <br>';
 
-                if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions'])) {
+                if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions'])
+                    && isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']) && !$this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']) {
                     $this->template = $this->template . '
 
         <p align="center">Role: &nbsp; <select name="role">
@@ -48,6 +49,7 @@ class Edit_User_View extends view
     </div>';
                 }
 
+        // @TODO optimize it
         if(isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']) && $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine'] == true
             || !isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['is_mine']))
         {

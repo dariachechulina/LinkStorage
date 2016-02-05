@@ -25,4 +25,4 @@ else
 }
 
 global $links_on_page;
-$links_on_page = 5;
+$links_on_page = 3;

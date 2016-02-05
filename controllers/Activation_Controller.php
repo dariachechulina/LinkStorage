@@ -17,7 +17,7 @@ class Activation_Controller extends Controller
         {
             $cur_hash = $_GET['code'];
             $this->model->activate_user($cur_hash);
-            $this->view = new Main_View(array('cont_view' => 'Activation', 'status' => Activation_Model::$error_pull));
+            $this->view = new Main_View(array('cont_view' => 'Activation'));
             $this->view->render();
         }
 

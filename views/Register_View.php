@@ -65,13 +65,13 @@ class Register_View extends view
             $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/register">
-         <h3 class="form-signin-heading">' . User_Model::$error_pull['register_err'] . '</h3>
+         <h3 class="form-signin-heading"> Sign up </h3>
         <input type=text class="input-block-level" name="name" placeholder="Name" value='. $reg_data['name'] .'> <br> <br>
         <input type=text class="input-block-level" name="surname" placeholder="Surname" value='. $reg_data['surname'] .'> <br> <br>
-        <input type=email class="input-block-level" name="email" placeholder="* Email" value='. $reg_data['email'] .' > <br> <br>
-        <input type=text class="input-block-level" name="login" placeholder="* Login"  value='. $reg_data['login'] .' > <br> <br>
-        <input type="password" class="input-block-level" name="pass" placeholder="* Password" value="" > <br> <br>
-        <input type="password" class="input-block-level" name="repass" placeholder="* Repeat password" value="" > <br> <br>
+        <input type=email class="input-block-level" name="email" placeholder="Email" value='. $reg_data['email'] .' > <br> <br>
+        <input type=text class="input-block-level" name="login" placeholder="Login"  value='. $reg_data['login'] .' > <br> <br>
+        <input type="password" class="input-block-level" name="pass" placeholder="Password" value="" > <br> <br>
+        <input type="password" class="input-block-level" name="repass" placeholder="Repeat password" value="" > <br> <br>
 
         <p align="center"><button class="btn btn-large btn-primary" type="submit" name="register" >Sign up</button>
         <button type="button" class="btn btn-large btn-primary" data-toggle="modal" data-target="#myModal" name="cancel">Cancel</button> </p>
@@ -94,7 +94,6 @@ class Register_View extends view
 
     </div>
   </div><br>
-        <p align="center"> Fields marked with * are required </p>
     </form>
 
 </div>';

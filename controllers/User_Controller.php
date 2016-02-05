@@ -28,21 +28,22 @@ class User_Controller extends Controller
             $this->model->pass = $_POST['pass'];
             $login_status = $this->model->login();
 
-            if (!$login_status) {
-
-                if (isset(User_Model::$error_pull['login_err'])) {
-                    $params = array('login' => $_POST['login'], 'pass' => $_POST['pass']);
-                    $this->view = new Main_View(array('cont_view' => 'Login', 'login_data' => $params));
-                    $this->view->render();
-                }
-
-                if (isset(User_Model::$error_pull['activation_err'])) {
-                    $this->view = new Main_View(array('cont_view' => 'Login', 'activation' => 'false'));
-                    $this->view->render();
-                }
+            //@TODO constants
+            if ($login_status == 1)
+            {
+                $params = array('login' => $_POST['login'], 'pass' => $_POST['pass']);
+                //@TODO rename view
+                $this->view = new Main_View(array('cont_view' => 'Login', 'login_data' => $params));
+                $this->view->render();
             }
 
-            if ($login_status)
+            if ($login_status == 2)
+            {
+                $this->view = new Main_View(array('cont_view' => 'Login', 'activation' => 'false'));
+                $this->view->render();
+            }
+
+            if ($login_status == 0)
             {
                 $_SESSION['login'] = $this->model->get_login();
                 $_SESSION['uid'] = $this->model->get_uid();
@@ -60,6 +61,7 @@ class User_Controller extends Controller
             $this->view->render();
         }
         if (isset($_POST['register'])) {
+            //@TODO get rid of bulk of setters. Replace by set_from_array
             $this->model->set_login($_POST['login']);
             $this->model->pass = $_POST['pass'];
             $this->model->set_email($_POST['email']);
@@ -68,11 +70,13 @@ class User_Controller extends Controller
 
             $reg = $this->model->register($_POST['repass']);
 
-            if ($reg) {
+            if ($reg)
+            {
                 header("refresh:0; url=/");
             }
 
-            if (isset(User_Model::$error_pull['register_err'])) {
+            if (!$reg)
+            {
                 $params = array('name' => $_POST['name'], 'surname' => $_POST['surname'], 'email' => $_POST['email'], 'login' => $_POST['login']);
                 $this->view = new Main_View(array('cont_view' => 'Register', 'reg_data' => $params));
                 $this->view->render();
@@ -104,8 +108,6 @@ class User_Controller extends Controller
 
         if (isset($_POST['edit']))
         {
-
-
             $active_status = '0';
             if (isset($_POST['check']) && strcmp($_POST['check'], 'on') == 0)
             {
@@ -130,16 +132,16 @@ class User_Controller extends Controller
 
             if ($_POST['name'] == '' || $_POST['surname'] == '')
             {
-                $error_message = 'Fill all required fields';
+                $this->model->save();
                 if (strcmp($logged_user->get_role(), 'admin') == 0)
                 {
                     $is_mine = ($logged_user->get_uid() == $this->model->get_uid()) ? true : false;
-                    $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $this->model, 'actions' => true, 'is_mine' => $is_mine, 'error' => $error_message));
+                    $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $this->model, 'actions' => true, 'is_mine' => $is_mine));
                     $this->view->render();
                 }
                 else
                 {
-                    $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $this->model, 'error' => $error_message));
+                    $this->view = new Main_View(array('cont_view' => 'Edit_User', 'edit_data' => $this->model));
                     $this->view->render();
                 }
             }

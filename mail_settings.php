@@ -5,7 +5,7 @@
  * Date: 1/21/16
  * Time: 4:42 PM
  */
-
+// @TODO expect OOP style
 include 'libs/class.phpmailer.php';
 date_default_timezone_set('Etc/UTC');
 require 'libs/PHPMailerAutoload.php';

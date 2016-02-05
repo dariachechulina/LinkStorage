@@ -33,8 +33,6 @@ class Body_View extends view
         $this->header = new Header_View();
         $this->content = new Content_View(array($this));
 
-        //$this->footer = new Footer_View();
-
        $this->args = array($this->header, $this->content);
     }
 

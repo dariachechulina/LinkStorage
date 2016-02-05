@@ -38,15 +38,18 @@ class Link_Controller extends Controller
             $this->model->set_privacy_status($privacy_status);
             $this->model->set_uid($_SESSION['uid']);
 
-            $this->model->save();
+            $is_saved = $this->model->save();
 
-            if (isset(Link_Model::$error_pull['validation_err'])) {
+            if (!$is_saved)
+            {
                 $params = array('title' => $_POST['title'], 'link' => $_POST['link'], 'description' => $_POST['description'], 'privacy_status' => $privacy_status);
                 $this->view = new Main_View(array('cont_view' => 'Add', 'add_data' => $params));
                 $this->view->render();
             }
 
-            header('Location: /Link/show_my');
+            else {
+                header('Location: /Link/show_my');
+            }
 
 
         }
@@ -54,11 +57,12 @@ class Link_Controller extends Controller
 
     function action_edit($lid)
     {
-        $this->model->get_link_by_id($lid);
+        $model = $this->model;
+        $model->get_link_by_id($lid);
 
         if (!isset($_POST['edit']))
         {
-            $this->view = new Main_View(array('cont_view' => 'Edit_Link', 'edit_data' => $this->model));
+            $this->view = new Main_View(array('cont_view' => 'Edit_Link', 'edit_data' => $model));
             $this->view->render();
         }
 
@@ -72,41 +76,81 @@ class Link_Controller extends Controller
             {
                 $privacy_status = 'public';
             }
-            $this->model->set_title($_POST['title']);
-            $this->model->set_link($_POST['link']);
-            $this->model->set_description($_POST['description']);
-            $this->model->set_privacy_status($privacy_status);
-            $this->model->save();
-            header('Location: /Link/show_my');
+            $model->set_title($_POST['title']);
+            $model->set_link($_POST['link']);
+            $model->set_description($_POST['description']);
+            $model->set_privacy_status($privacy_status);
+            $is_saved = $model->save();
+
+            if (!$is_saved)
+            {
+                $this->view = new Main_View(array('cont_view' => 'Edit_Link', 'edit_data' => $model));
+                $this->view->render();
+            }
+
+            else
+            {
+                header('Location: /Link/show_my');
+            }
         }
     }
 
     function action_show($lid)
     {
+        $model = $this->model;
         global $logged_user;
-        $is_obj = $this->model->get_link_by_id($lid);
+        $link_exist = $model->get_link_by_id($lid);
 
-        if (!is_object($logged_user) && $is_obj && strcmp($this->model->get_privacy_status(), 'public') == 0 ||
-             is_object($logged_user) && $is_obj && strcmp($this->model->get_privacy_status(), 'public') == 0
-                                     && $logged_user->get_uid() !== $this->model->get_uid()
-                                     && strcmp($logged_user->get_role(), 'user') == 0)
-        {
-            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model));
-            $this->view->render();
+        $is_public = $model->get_privacy_status() == 'public' ? TRUE : FALSE ;
+        $is_anonymous = !is_object($logged_user) ? TRUE : FALSE;
+        $role = FALSE;
+        $is_my_link = FALSE;
+        if (!$is_anonymous) {
+            $role = $logged_user->get_role();
+            $is_my_link = $model->is_mine($lid);
         }
+        $is_admin = $role == 'admin' || $role == 'editor';
 
-        else if (is_object($logged_user) && $is_obj && $logged_user->get_uid() == $this->model->get_uid() ||
-                 is_object($logged_user) && $is_obj && strcmp($logged_user->get_role(), 'user') !== 0)
-        {
-            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $this->model, 'actions' => true));
-            $this->view->render();
+        $show_access_denied = TRUE;
+        if ($link_exist && ($is_admin || $is_my_link || $is_public)) {
+            $show_access_denied = FALSE;
         }
-
-        else
-        {
+        if (!$show_access_denied) {
+            if ($is_admin || $is_my_link) {
+                $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $model, 'actions' => true));
+                $this->view->render();
+            } else {
+                $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $model));
+                $this->view->render();
+            }
+        } else {
             $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
             $this->view->render();
         }
+
+
+
+//        if (!is_object($logged_user) && $link_exist && strcmp($model->get_privacy_status(), 'public') == 0 ||
+//             is_object($logged_user) && $link_exist && strcmp($model->get_privacy_status(), 'public') == 0
+//                                     && $logged_user->get_uid() !== $model->get_uid()
+//                                     && strcmp($logged_user->get_role(), 'user') == 0)
+//        {
+//            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $model));
+//            $this->view->render();
+//        }
+//
+//        else if (is_object($logged_user) && $link_exist && $logged_user->get_uid() == $model->get_uid() ||
+//                 is_object($logged_user) && $link_exist && strcmp($logged_user->get_role(), 'user') !== 0)
+//        {
+//            $this->view = new Main_View(array('cont_view' => 'Link', 'link' => $model, 'actions' => true));
+//            $this->view->render();
+//        }
+//
+//        else
+//        {
+//            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
+//            $this->view->render();
+//        }
     }
 
     function action_show_all()

@@ -8,8 +8,6 @@
  */
 class model
 {
-    static $error_pull = array();
-
     protected $connection;
 
     public function __construct()
@@ -20,19 +18,10 @@ class model
         $this->connection = new PDO("mysql:host=localhost;dbname=testdb", $login, $pass);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
+
+    //@TODO maybe it is better to make it abstract?
     public function is_mine($id)
     {
-    }
-
-    static function print_array(array $error_list)
-    {
-        $result_string = '';
-        foreach ($error_list as $error)
-        {
-           $result_string = $result_string . '<br> <h3>' . $error .'</h3>';
-        }
-
-        return $result_string;
     }
 
     public function is_action_allowed($role, $action)

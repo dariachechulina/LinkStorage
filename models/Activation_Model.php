@@ -5,8 +5,6 @@ class Activation_Model extends model
 {
     private $uid, $hash, $exp_time;
 
-    public static $error_pull = array();
-
     public function send($uid_, $email_, $flag = null)
     {
         $query = $this->connection->prepare("SELECT * FROM tmplinks WHERE uid = ?");
@@ -78,7 +76,7 @@ class Activation_Model extends model
         $result = $query->fetchAll();
         if (count($result) == 0)
         {
-            self::$error_pull['msg'] = 'Link doesn\'t exist';
+            error::$error_pull['msg'] = 'Link doesn\'t exist';
             return;
         }
         $cur_uid = $result[0]["uid"];
@@ -89,7 +87,7 @@ class Activation_Model extends model
 
         if (count($result) == 0)
         {
-            self::$error_pull['msg'] = 'Link does\'t exist';
+            error::$error_pull['msg'] = 'Link does\'t exist';
             return;
         }
         $cur_login = $result[0]['login'];
@@ -99,12 +97,12 @@ class Activation_Model extends model
         {
             $query = $this->connection->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
-            self::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
+            error::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
             return;
         }
         else
         {
-            self::$error_pull['msg'] = 'This activation link has already activated the corresponding profile';
+            error::$error_pull['msg'] = 'This activation link has already activated the corresponding profile';
             return;
         }
 

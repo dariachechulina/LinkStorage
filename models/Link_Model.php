@@ -9,7 +9,6 @@
 class Link_Model extends model
 {
     private $title, $link, $description, $privacy_status, $uid, $lid = 0;
-    public static $error_pull = array();
 
     public function get_title()
     {
@@ -67,7 +66,7 @@ class Link_Model extends model
             strcmp($this->link, '') == 0 ||
             strcmp($this->description, '') == 0)
         {
-            self::$error_pull['validation_err'] = 'Fill all fields';
+            error::$error_pull['validation_err'] = 'Fill all fields';
             return false;
         }
         return true;
@@ -87,12 +86,12 @@ class Link_Model extends model
                 $query = "UPDATE links SET title = '$this->title', link = '$this->link', description = '$this->description', privacy_status = '$this->privacy_status', uid = $this->uid WHERE lid = '$this->lid'";
                 $this->connection->exec($query);
             }
-            return;
+            return true;
         }
 
         else
         {
-            return;
+            return false;
         }
     }
 

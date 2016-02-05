@@ -13,11 +13,5 @@ class Activation_View extends view
     public function __construct(array $params)
     {
         $this->parent_args = $params;
-        $status = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['status'];
-
-        if (isset($status['msg']))
-        {
-            $this->template = '<h2>'. $status['msg'].'</h2>';
-        }
     }
 }

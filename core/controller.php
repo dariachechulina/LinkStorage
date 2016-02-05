@@ -44,6 +44,7 @@ class Controller
             $model_name = $this->get_resource_model();
             $cur_model = new $model_name();
 
+            // @TODO define constants
             $result_status = $cur_model->is_mine($id);
 
             $flag = false;
@@ -51,7 +52,7 @@ class Controller
             switch ($result_status)
             {
                 case 1 :
-                    $action = $action . '_own';
+                    $action .= '_own';
                     break;
 
                 case 2:

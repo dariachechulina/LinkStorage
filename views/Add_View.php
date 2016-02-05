@@ -13,7 +13,6 @@ class Add_View extends view
     public function __construct(array $params)
     {
         $this->parent_args = $params;
-        $add_data = array();
 
         if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['add_data']))
         {
@@ -31,7 +30,7 @@ class Add_View extends view
             $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
-        <h3 class="form-signin-heading"> Error: ' . Link_Model::$error_pull['validation_err'] . '</h3>
+        <h3 class="form-signin-heading"> Add link </h3> <br>
         <input type=text class="input-block-level" name="title" placeholder="Title" value=' . $add_data['title'] .'> <br> <br>
         <input type=text class="input-block-level" name="link" placeholder="Link" value=' . $add_data['link'] .'> <br> <br>
         <div class="form-group">
@@ -70,7 +69,7 @@ class Add_View extends view
             $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="#">
-        <h2 class="form-signin-heading" align="center"> </h2> <br>
+        <h3 class="form-signin-heading" align="center"> Add link </h3> <br>
         <input type=text class="input-block-level" name="title" placeholder="Title" value=""> <br> <br>
         <input type=text class="input-block-level" name="link" placeholder="Link" value=""> <br> <br>
         <div class="form-group">

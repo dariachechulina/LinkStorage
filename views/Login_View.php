@@ -24,10 +24,10 @@ class Login_View extends view
         {
             if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['activation']))
             {
-                $this->template = '<h2> You profile is not active.</h2> <h2> Please, check your mailbox! </h2> <br> <br>
-                <h3>I lost my link, send again <br> <br>
-                <input type="text" class="input-block-level" id="email" placeholder="Enter your email">
-                <button id="resend">Send</button> </h3>';
+                $this->template = '<h3> Please, check your mailbox! </h3> <br> <br>
+                <h3>I lost my link, send again </h3>
+                <p align="center"> <input type="text" class="input-block-level" id="email" placeholder="Enter your email">
+                <button id="resend">Send</button> </p>';
                 return;
             }
 
@@ -57,7 +57,7 @@ class Login_View extends view
                     $this->template = '<div class="container">
 
     <form class="form-signin" method="post" action="/User/login">
-        <h3 class="form-signin-heading"> Error: ' . User_Model::$error_pull['login_err'] . '</h3>
+        <h3 class="form-signin-heading"> Sign in </h3>
         <br>
         <input type="text" class="input-block-level" name="login" placeholder="Login" value = ' . $login .'>
         <input type="password" class="text-error"  name="pass" placeholder="Password">

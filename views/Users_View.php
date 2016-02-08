@@ -6,7 +6,7 @@
  * Date: 1/20/16
  * Time: 4:43 PM
  */
-class Users_View extends view
+class Users_View extends View
 {
     public $parent_args = array();
 
@@ -15,7 +15,7 @@ class Users_View extends view
         $this->parent_args = $params;
 
             $this->template = '%s';
-            $users = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['all_users'];
+            $users = $this->get_parameters()['all_users'];
             $table_begin = '<div class="container">
   <h2>Users</h2>
   <br><br>

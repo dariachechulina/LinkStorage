@@ -6,7 +6,7 @@
  * Date: 1/20/16
  * Time: 4:33 PM
  */
-class Add_View extends view
+class Add_View extends View
 {
     public $parent_args = array();
 
@@ -14,9 +14,9 @@ class Add_View extends view
     {
         $this->parent_args = $params;
 
-        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['add_data']))
+        if (isset($this->get_parameters()['add_data']))
         {
-            $add_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['add_data'];
+            $add_data = $this->get_parameters()['add_data'];
 
             if (strcmp($add_data['privacy_status'], 'private') == 0)
             {

@@ -16,12 +16,12 @@ class Main_Controller extends Controller
         if (is_object($logged_user) && strcmp($logged_user->get_role(), 'user') !== 0){
             $this->model = new Link_Model();
             $params = $this->model->get_all_links();
-            $this->view = new Main_View(array('cont_view' => 'Links', 'all_links' => $params, 'private' => true));
+            $this->view = new Main_View(array(CONTENT => 'Links', 'all_links' => $params, 'private' => true));
             $this->view->render();
         } else {
             $this->model = new Link_Model();
             $params = $this->model->get_all_public_links();
-            $this->view = new Main_View(array('cont_view' => 'Links', 'all_links' => $params));
+            $this->view = new Main_View(array(CONTENT => 'Links', 'all_links' => $params));
             $this->view->render();
         }
 

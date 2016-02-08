@@ -8,7 +8,7 @@
  */
 
 
-class Main_View extends view
+class Main_View extends View
 {
     private $head;
     private $body;

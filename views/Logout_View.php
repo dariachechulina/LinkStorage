@@ -6,7 +6,7 @@
  * Date: 1/20/16
  * Time: 12:04 PM
  */
-class Logout_View extends view
+class Logout_View extends View
 {
     public $parent_args = array();
 

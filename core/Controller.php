@@ -13,8 +13,8 @@ class Controller
 
     function __construct()
     {
-        $this->view = new view();
-        $this->model = new model();
+        $this->view = new View();
+        $this->model = new Model();
     }
 
     function action_allowed_status($action, $id = NULL)
@@ -23,7 +23,7 @@ class Controller
         $cur_user = $logged_user;
         if (!is_object($cur_user))
         {
-            $role = 'anonim';
+            $role = ANONYMOUS;
             if (!is_null($id))
             {
                 $action = $action . '_any';
@@ -31,7 +31,7 @@ class Controller
 
             if (!$this->model->is_action_valid($action))
             {
-                return 'access_denied';
+                return ACCESS_DENIED;
             }
         }
         else
@@ -44,54 +44,46 @@ class Controller
             $model_name = $this->get_resource_model();
             $cur_model = new $model_name();
 
-            // @TODO define constants
-            $result_status = $cur_model->is_mine($id);
+            $model_exists = $cur_model->exists($id);
 
-            $flag = false;
-
-            switch ($result_status)
+            if ($model_exists)
             {
-                case 1 :
+                $is_mine = $cur_model->is_mine($id);
+                if ($is_mine)
+                {
                     $action .= '_own';
-                    break;
-
-                case 2:
+                }
+                else
+                {
                     $action = $action . '_any';
-                    break;
-
-                case 0:
-                    $flag = true;
-                    break;
+                }
             }
 
-            if ($flag && strcmp($role, 'admin') == 0 && strcmp($model_name, 'User_Model') == 0)
+            else
             {
-                return '404';
-            }
-
-            if ($flag && strcmp($role, 'user') !== 0 && strcmp($model_name, 'Link_Model') == 0)
-            {
-                return '404';
-            }
-
-            if ($flag)
-            {
-                return 'access_denied';
+                if (strcmp($role, ADMIN) == 0)
+                {
+                    return NOT_FOUND;
+                }
+                else
+                {
+                    return ACCESS_DENIED;
+                }
             }
         }
 
 
         if (!$this->model->is_action_valid($action))
         {
-            return '404';
+            return NOT_FOUND;
         }
 
         if (!$this->model->is_action_allowed($role, $action))
         {
-            return 'access_denied';
+            return ACCESS_DENIED;
         }
 
-        return 'ok';
+        return SUCCESS;
     }
 
 

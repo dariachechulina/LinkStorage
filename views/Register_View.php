@@ -6,7 +6,7 @@
  * Date: 1/19/16
  * Time: 12:45 PM
  */
-class Register_View extends view
+class Register_View extends View
 {
     public $parent_args = array();
 
@@ -14,10 +14,11 @@ class Register_View extends view
     {
         $this->parent_args = $params;
         $reg_data = array();
+        $parameters = $this->get_parameters();
 
-        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['reg_data']))
+        if (isset($parameters['reg_data']))
         {
-            $reg_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['reg_data'];
+            $reg_data = $parameters['reg_data'];
         }
         if (count($reg_data) == 0)
         {

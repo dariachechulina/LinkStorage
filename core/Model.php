@@ -6,22 +6,14 @@
  * Date: 12/10/15
  * Time: 4:36 PM
  */
-class model
+class Model
 {
     protected $connection;
 
     public function __construct()
     {
-        $login = "root";
-        $pass = "qwerty123";
-
-        $this->connection = new PDO("mysql:host=localhost;dbname=testdb", $login, $pass);
+        $this->connection = new PDO(DB_DSN, DB_LOGIN, DB_PASSWORD);
         $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-
-    //@TODO maybe it is better to make it abstract?
-    public function is_mine($id)
-    {
     }
 
     public function is_action_allowed($role, $action)
@@ -50,4 +42,7 @@ class model
 
         return true;
     }
+
+    public function is_mine($id) {}
+    public function exists($id)  {}
 }

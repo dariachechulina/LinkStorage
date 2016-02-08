@@ -6,7 +6,7 @@
  * Date: 1/20/16
  * Time: 4:59 PM
  */
-class Access_Denied_View extends view
+class Access_Denied_View extends View
 {
     public function __construct()
     {

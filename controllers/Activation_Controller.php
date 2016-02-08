@@ -17,13 +17,13 @@ class Activation_Controller extends Controller
         {
             $cur_hash = $_GET['code'];
             $this->model->activate_user($cur_hash);
-            $this->view = new Main_View(array('cont_view' => 'Activation'));
+            $this->view = new Main_View(array(CONTENT => 'Activation'));
             $this->view->render();
         }
 
         else
         {
-            $this->view = new Main_View(array('cont_view' => 'Not_Found'));
+            $this->view = new Main_View(array(CONTENT => NOT_FOUND));
             $this->view->render();
         }
     }
@@ -37,7 +37,7 @@ class Activation_Controller extends Controller
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET')
         {
-            $this->view = new Main_View(array('cont_view' => 'Access_Denied'));
+            $this->view = new Main_View(array(CONTENT => ACCESS_DENIED));
             $this->view->render();
         }
 

@@ -6,18 +6,14 @@
  * Date: 1/20/16
  * Time: 5:05 PM
  */
-class Edit_Link_View extends view
+class Edit_Link_View extends View
 {
     public $parent_args = array();
 
     public function __construct(array $params)
     {
         $this->parent_args = $params;
-        $edit_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['edit_data'];
-        global $logged_user;
-        $role = $logged_user->get_role();
-
-        if (is_object($logged_user)) {
+        $edit_data = $this->get_parameters()['edit_data'];
 
 
             $privacy = '';
@@ -66,7 +62,7 @@ class Edit_Link_View extends view
     </form>
 </div>';
 
-        }
+
     }
 
 }

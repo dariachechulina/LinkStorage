@@ -6,7 +6,7 @@
  * Date: 1/19/16
  * Time: 4:12 PM
  */
-class Links_View extends view
+class Links_View extends View
 {
     public $parent_args = array();
 
@@ -14,12 +14,14 @@ class Links_View extends view
     {
         $this->parent_args = $params;
 
-        if(isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['all_links']))
+        $parameters = $this->get_parameters();
+
+        if(isset($parameters['all_links']))
         {
             $this->template = '%s';
-            $links = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['all_links'];
-            if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['private'])
-                && $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['private'] == true) {
+            $links = $parameters['all_links'];
+            if (isset($parameters['private']) && $parameters['private'] == true)
+            {
                 $table_begin = '<div class="container">
   <h2>Links</h2>
   <br><br>
@@ -86,10 +88,8 @@ class Links_View extends view
 
     </div>
   </div>' . '</td>' . '</tr>';
-                    // var_dump($table_rows[$i]);
-
-                }
-            }
+                   }
+               }
             }
 
             else
@@ -150,9 +150,16 @@ class Links_View extends view
                 }
 
 
-                for ($i = 1; $i < $pages + 1; $i++) {
-
-                    $pager = $pager . '<li><a href="?page=' . $i . '">' . $i . '</a></li>';
+                for ($i = 1; $i < $pages + 1; $i++)
+                {
+                    if ($i == $cur_page)
+                    {
+                        $pager = $pager . '<li class="active"><a href="?page=' . $i . '">' . $i . '</a></li>';
+                    }
+                    else
+                    {
+                        $pager = $pager . '<li><a href="?page=' . $i . '">' . $i . '</a></li>';
+                    }
                 }
 
                 if ($cur_page < $pages) {
@@ -168,10 +175,10 @@ class Links_View extends view
             $this->args = array($str_arg);
         }
 
-        if(isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['my_links']))
+        if(isset($parameters['my_links']))
         {
             $this->template = '%s';
-            $links = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['my_links'];
+            $links = $parameters['my_links'];
             $table_begin = '<div class="container">
   <h2>My links</h2>
   <br><br>
@@ -262,7 +269,14 @@ class Links_View extends view
 
                     for ($i = 1; $i < $pages + 1; $i++)
                     {
-                        $pager = $pager . '<li><a href="?page=' . $i . '">' . $i . '</a></li>';
+                        if ($i == $cur_page)
+                        {
+                            $pager = $pager . '<li class="active"><a href="?page=' . $i . '">' . $i . '</a></li>';
+                        }
+                        else
+                        {
+                            $pager = $pager . '<li><a href="?page=' . $i . '">' . $i . '</a></li>';
+                        }
                     }
 
                     if ($cur_page < $pages) {

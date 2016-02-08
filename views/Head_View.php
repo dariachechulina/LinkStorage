@@ -6,7 +6,7 @@
  * Date: 1/13/16
  * Time: 12:45 PM
  */
-class Head_View extends view
+class Head_View extends View
 {
     public $parent_args = array();
 

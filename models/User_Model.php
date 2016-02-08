@@ -1,10 +1,8 @@
 <?php
 
-class User_Model extends model
+class User_Model extends Model
 {
     private $login, $email, $pass, $name, $surname, $status = 0, $role = 'user', $uid = 0;
-
-    static $error_pull = array();
 
     public function get_login()
     {
@@ -86,31 +84,46 @@ class User_Model extends model
 
     public function save()
     {
-         if ($this->uid == 0)
+        if (!($this->name == '' || $this->surname == ''))
         {
-            $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
-            $this->connection->exec($query);
-            $this->uid = $this->connection->lastInsertId();
-        }
-        else
-        {
-            if ($this->name == '' || $this->surname == '')
+            var_dump($this->name == '');
+            if ($this->uid == 0)
             {
-                error::$error_pull['editing_error'] = 'Fill all required fields!';
+                $query = "INSERT INTO userdb (login, pass, email, role, status, name, surname) VALUES ('$this->login', '$this->pass', '$this->email', '$this->role', '$this->status', '$this->name', '$this->surname')";
+                $this->connection->exec($query);
+                $this->uid = $this->connection->lastInsertId();
             }
             else
             {
                 $query = "UPDATE userdb SET login = '$this->login', pass = '$this->pass', email = '$this->email', role = '$this->role', status = '$this->status', name = '$this->name', surname = '$this->surname' WHERE uid = '$this->uid'";
                 $this->connection->exec($query);
             }
+
         }
+
+        else
+        {
+            Error::$error_pull['editing_error'] = 'Fill all required fields!';
+            return false;
+        }
+
+        return true;
+    }
+
+    public function set_register_data($data)
+    {
+        $this->set_login($data['login']);
+        $this->set_password(md5($data['pass']));
+        $this->set_email($data['email']);
+        $this->set_name($data['name']);
+        $this->set_surname($data['surname']);
     }
 
     private function validate_login_info()
     {
         if (strcmp($this->login, '') == 0)
         {
-            error::$error_pull['login_err'] = "Invalid login";
+            Error::$error_pull['login_err'] = "Invalid login";
             return false;
         }
 
@@ -120,13 +133,13 @@ class User_Model extends model
         $length = count($result);
         if ($length == 0)
         {
-            error::$error_pull['login_err'] = "No such user";
+            Error::$error_pull['login_err'] = "No such user";
             return false;
         }
 
         if ($result[0]['pass'] != $this->pass)
         {
-            error::$error_pull['login_err'] = "Incorrect password";
+            Error::$error_pull['login_err'] = "Incorrect password";
             return false;
         }
 
@@ -142,19 +155,19 @@ class User_Model extends model
     {
         if ($this->login == '' || $this->pass == '' || $this->email == '' || $this->surname == '' || $this->name == '')
         {
-            error::$error_pull['register_err'] = 'Please, fill all required fields';
+            Error::$error_pull['register_err'] = 'Please, fill all required fields';
             return false;
         }
         if ($this->pass != md5($repass))
         {
-            error::$error_pull['register_err'] = "Password don't match. Try again";
+            Error::$error_pull['register_err'] = "Password don't match. Try again";
             return false;
         }
 
         $regex = '/^[_A-Za-z0-9-+]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/';
         if (!preg_match($regex, $this->email))
         {
-            error::$error_pull['register_err'] = "Invalid email";
+            Error::$error_pull['register_err'] = "Invalid email";
             return false;
         }
 
@@ -164,9 +177,8 @@ class User_Model extends model
         $length = count($result);
         if ($length != 0)
         {
-            error::$error_pull['register_err'] = "User with such login exists. Try again";
+            Error::$error_pull['register_err'] = "User with such login exists. Try again";
             return false;
-            #return "User with such login exists. Try again";
         }
         $query = $this->connection->prepare("SELECT * FROM userdb WHERE email = ?");
         $query->execute(array($this->email));
@@ -174,7 +186,7 @@ class User_Model extends model
         $length = count($result);
         if ($length != 0)
         {
-            error::$error_pull['register_err'] = "User with such email exists. Try again";
+            Error::$error_pull['register_err'] = "User with such email exists. Try again";
             return false;
         }
 
@@ -187,16 +199,16 @@ class User_Model extends model
 
         if (!$validation_status)
         {
-            return 1;
+            return VALIDATION_ERROR;
         }
 
         if (!$this->is_active())
         {
-            error::$error_pull['activation_err'] = "Your profile isn't active";
+            Error::$error_pull['activation_err'] = "Your profile isn't active";
             $this->send_email();
-            return 2;
+            return NOT_ACTIVE;
         }
-        return 0;
+        return SUCCESS;
     }
 
     public function register($repass)
@@ -296,23 +308,22 @@ class User_Model extends model
         return $users;
     }
 
+    public function exists($id)
+    {
+        return $this->find_user_by_id($id);
+    }
+
     public function is_mine($id)
     {
-        $is_valid_id = $this->find_user_by_id($id);
         global $logged_user;
-
-        if (!$is_valid_id)
-        {
-            return 0;
-        }
 
         if ($logged_user->get_uid() == $id)
         {
-            return 1;
+            return true;
         }
         else
         {
-            return 2;
+            return false;
         }
     }
 

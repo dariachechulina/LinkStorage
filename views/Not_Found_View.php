@@ -6,7 +6,7 @@
  * Date: 1/21/16
  * Time: 4:18 PM
  */
-class Not_Found_View extends view
+class Not_Found_View extends View
 {
     public function __construct()
     {

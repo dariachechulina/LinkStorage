@@ -6,7 +6,7 @@
  * Date: 12/10/15
  * Time: 12:51 PM
  */
-class Link_Model extends model
+class Link_Model extends Model
 {
     private $title, $link, $description, $privacy_status, $uid, $lid = 0;
 
@@ -66,7 +66,7 @@ class Link_Model extends model
             strcmp($this->link, '') == 0 ||
             strcmp($this->description, '') == 0)
         {
-            error::$error_pull['validation_err'] = 'Fill all fields';
+            Error::$error_pull['validation_err'] = 'Fill all fields';
             return false;
         }
         return true;
@@ -194,25 +194,23 @@ class Link_Model extends model
         return $links;
     }
 
+    public function exists($id)
+    {
+        return $this->get_link_by_id($id);
+    }
 
     public function is_mine($id)
     {
         global $logged_user;
 
-        $is_obj = $this->get_link_by_id($id);
-        if (!$is_obj)
+        if ($this->get_uid() == $logged_user->get_uid())
         {
-            return 0;
+            return true;
         }
 
-        if ($is_obj && $this->get_uid() == $logged_user->get_uid())
+        else
         {
-            return 1;
-        }
-
-        if ($is_obj && $this->get_uid() !== $logged_user->get_uid())
-        {
-            return 2;
+            return false;
         }
     }
 

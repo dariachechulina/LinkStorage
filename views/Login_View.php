@@ -6,7 +6,7 @@
  * Date: 1/18/16
  * Time: 3:06 PM
  */
-class Login_View extends view
+class Login_View extends View
 {
     public $parent_args = array();
 
@@ -14,15 +14,16 @@ class Login_View extends view
     {
         $this->parent_args = $params;
         $login_data = array();
+        $parameters = $this->get_parameters();
 
 
-        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['login_data']))
+        if (isset($parameters['login_data']))
         {
-            $login_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['login_data'];
+            $login_data = $parameters['login_data'];
         }
         if (count($login_data) == 0)
         {
-            if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['activation']))
+            if (isset($parameters['activation']))
             {
                 $this->template = '<h3> Please, check your mailbox! </h3> <br> <br>
                 <h3>I lost my link, send again </h3>

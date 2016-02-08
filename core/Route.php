@@ -10,8 +10,8 @@ class Route
 {
     static function start()
     {
-        $controller_name = 'Main';
-        $action_name = 'index';
+        $controller_name = MAIN_CONTROLLER;
+        $action_name = INDEX;
         $id = NULL;
 
         $url_parts = parse_url($_SERVER['REQUEST_URI']);
@@ -34,20 +34,6 @@ class Route
         $controller_full_name = $controller_name . '_Controller';
         $action_full_name = 'action_'.$action_name;
 
-
-        // @TODO add to autoload
-        $controller_file = $controller_full_name.'.php';
-        $controller_path = "controllers/".$controller_file;
-
-        if(file_exists($controller_path))
-        {
-            include "controllers/".$controller_file;
-        }
-        else
-        {
-            Route::ErrorPage404();
-        }
-
         $controller = new $controller_full_name;
         $action = $action_full_name;
 
@@ -55,9 +41,9 @@ class Route
         {
             $current_action = strtolower($controller_name. '_' . $action_name);
 
-            $res = $controller->action_allowed_status($current_action, $id);
+            $action_status = $controller->action_allowed_status($current_action, $id);
 
-            if ($res == 'ok')
+            if ($action_status == SUCCESS)
             {
                 if ($id == NULL)
                 {
@@ -68,32 +54,32 @@ class Route
                     $controller->$action($id);
                 }
             }
-            if ($res == 'access_denied')
+            if ($action_status == ACCESS_DENIED)
             {
                 Route::AccessDeniedPage();
             }
 
-            if ($res == '404')
+            if ($action_status == NOT_FOUND)
             {
-                Route::ErrorPage404();
+                Route::NotFoundPage();
             }
         }
         else
         {
-           Route::ErrorPage404();
+           Route::NotFoundPage();
         }
 
     }
 
-    function ErrorPage404()
+    function NotFoundPage()
     {
-        $view = new Main_View(array('cont_view' => 'Not_Found'));
+        $view = new Main_View(array(CONTENT => NOT_FOUND));
         $view->render();
     }
 
     function AccessDeniedPage()
     {
-        $view = new Main_View(array('cont_view' => 'Access_Denied'));
+        $view = new Main_View(array(CONTENT => ACCESS_DENIED));
         $view->render();
     }
 

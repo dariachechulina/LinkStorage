@@ -1,7 +1,7 @@
 <?php
 
 
-class Activation_Model extends model
+class Activation_Model extends Model
 {
     private $uid, $hash, $exp_time;
 
@@ -22,7 +22,20 @@ class Activation_Model extends model
         $result = $query->fetchAll();
         $to = $result[0]['login'];
 
-        global $mail;
+        global $mail_settings;
+        $mail = new PHPMailer();
+        $mail->isSMTP();
+        $mail->SMTPDebug = $mail_settings['SMTPDebug'];
+        $mail->Debugoutput = $mail_settings['Debugoutput'];
+        $mail->Host = $mail_settings['Host'];
+        $mail->Port = $mail_settings['Port'];
+        $mail->SMTPSecure = $mail_settings['SMTPSecure'];
+        $mail->SMTPAuth = $mail_settings['SMTPAuth'];
+        $mail->Username = $mail_settings['Username'];
+        $mail->Password = $mail_settings['Password'];
+        $mail->setFrom($mail_settings['Username'], $mail_settings['From']);
+        $mail->addReplyTo($mail_settings['Username'], $mail_settings['From']);
+        $mail->Subject = $mail_settings['Subject'];
 
         $mail->addAddress($email_, $to);
 
@@ -76,7 +89,7 @@ class Activation_Model extends model
         $result = $query->fetchAll();
         if (count($result) == 0)
         {
-            error::$error_pull['msg'] = 'Link doesn\'t exist';
+            Error::$error_pull['msg'] = 'Link doesn\'t exist';
             return;
         }
         $cur_uid = $result[0]["uid"];
@@ -87,7 +100,7 @@ class Activation_Model extends model
 
         if (count($result) == 0)
         {
-            error::$error_pull['msg'] = 'Link does\'t exist';
+            Error::$error_pull['msg'] = 'Link does\'t exist';
             return;
         }
         $cur_login = $result[0]['login'];
@@ -97,12 +110,12 @@ class Activation_Model extends model
         {
             $query = $this->connection->prepare("UPDATE userdb SET status='1' WHERE login=?");
             $query->execute(array($cur_login));
-            error::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
+            Error::$error_pull['msg'] = 'Profile of user <b>'.$cur_login.'</b> is successfully activated';
             return;
         }
         else
         {
-            error::$error_pull['msg'] = 'This activation link has already activated the corresponding profile';
+            Error::$error_pull['msg'] = 'This activation link has already activated the corresponding profile';
             return;
         }
 

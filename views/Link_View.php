@@ -6,7 +6,7 @@
  * Date: 1/25/16
  * Time: 10:30 AM
  */
-class Link_View extends view
+class Link_View extends View
 {
     public $parent_args = array();
 
@@ -14,7 +14,9 @@ class Link_View extends view
     {
         $this->parent_args = $params;
 
-        $show_data = $this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['link'];
+        $parameters = $this->get_parameters();
+
+        $show_data = $parameters['link'];
 
 
 
@@ -23,8 +25,6 @@ class Link_View extends view
         {
             $privacy = 'checked=""';
         }
-
-
 
             $this->template = '<div class="container">
 
@@ -41,7 +41,7 @@ class Link_View extends view
     ';
 
 
-        if (isset($this->parent_args[0]->parent_args[0]->parent_args[0]->parameters['actions']))
+        if (isset($parameters['actions']))
         {
             $this->template = $this->template.'
         <p align="center"> <button class="btn btn-large btn-warning" type="button" onclick="location.href = \'/Link/edit/'.$show_data->get_lid().'\';" name="edit" ><span class="glyphicon glyphicon-pencil"></span> &nbsp;Edit</button> &nbsp;

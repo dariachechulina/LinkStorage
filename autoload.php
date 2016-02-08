@@ -18,4 +18,19 @@ function autoload($className)
     {
         require_once 'models/'. $className . '.php';
     }
+
+    if (file_exists('core/'. $className . '.php'))
+    {
+        require_once 'core/'. $className . '.php';
+    }
+
+    if (file_exists('controllers/'. $className . '.php'))
+    {
+        require_once 'controllers/'. $className . '.php';
+    }
+
+    if (file_exists($className . '.php'))
+    {
+        require_once $className . '.php';
+    }
 }
